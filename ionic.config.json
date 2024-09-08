@@ -1,0 +1,7 @@
+{
+  "name": "gamificacionDuoc",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
