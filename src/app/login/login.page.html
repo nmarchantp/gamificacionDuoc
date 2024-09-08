@@ -1,0 +1,27 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Login</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding" color="background">
+  <form (ngSubmit)="iniciarSesion()">
+    <ion-item lines="full">
+      <ion-label position="floating" color="secondary">Usuario</ion-label>
+      <ion-input [(ngModel)]="usuario" name="usuario" required color="primary"></ion-input>
+    </ion-item>
+
+    <ion-item lines="full">
+      <ion-label position="floating" color="secondary">Contraseña</ion-label>
+      <ion-input [(ngModel)]="contrasena" type="password" name="contrasena" required color="primary"></ion-input>
+    </ion-item>
+
+    <ion-button expand="full" type="submit" color="secondary" class="boton-ingresar">INGRESAR</ion-button>
+
+    <ion-text color="medium" class="forgot-password-link">
+      <a (click)="irARecuperarContrasena()">¿Olvidaste tu contraseña?</a>
+    </ion-text>
+
+    <p *ngIf="mensajeError" class="error">{{ mensajeError }}</p>
+  </form>
+</ion-content>

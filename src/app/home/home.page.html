@@ -1,20 +1,69 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>
-      Blank
-    </ion-title>
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Inicio</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="cerrarSesion()" color="danger"> 
+        <ion-icon slot="icon-only" name="log-out-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content [fullscreen]="true" class="ion-padding" color="background">
+  <!-- Bienvenida al usuario -->
+  <ion-card color="secondary" class="bienvenida-card">
+    <ion-card-header>
+      <ion-item lines="none" color="secondary">
+        <ion-avatar slot="start">
+          <!-- Imagen de perfil del usuario -->
+          <ion-img src="assets/icon/perfil.jpeg" alt="Foto de perfil"></ion-img>
+        </ion-avatar>
+        <ion-label>
+          <ion-card-title>Bienvenido, {{ nombreUsuario }}!</ion-card-title>
+          <ion-text>
+            <ion-text class="info-text">Estás en el nivel: {{ nivelUsuario }}</ion-text>
+            <ion-text class="info-text">Tienes {{ puntosUsuario }} puntos.</ion-text>
+          </ion-text>
+        </ion-label>
+      </ion-item>
+    </ion-card-header>
+  </ion-card>
 
-  <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
-  </div>
+  <!-- Sección de Desafíos -->
+  <ion-card color="secondary">
+    <ion-card-header>
+      <ion-card-title>Lista de desafíos</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list>
+        <ion-item *ngFor="let desafio of primerosDesafios">
+          <ion-label>
+            <ion-text class="desafio-descripcion">{{ desafio.descripcion }}</ion-text>
+            <ion-text class="desafio-puntos">Puntos: {{ desafio.puntos }}</ion-text>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+      <ion-button expand="full" color="primary" routerLink="/tabs/desafios">Ver Todos los Desafíos</ion-button>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Sección de Premios -->
+  <ion-card color="secondary">
+    <ion-card-header>
+      <ion-card-title>Premios Disponibles</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-button expand="full" color="primary" routerLink="/premios">Ver Premios</ion-button>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Sección de Ranking -->
+  <ion-card color="secondary">
+    <ion-card-header>
+      <ion-card-title>Ranking de Usuarios</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-button expand="full" color="primary" routerLink="/ranking">Ver Ranking</ion-button>
+    </ion-card-content>
+  </ion-card>
 </ion-content>
