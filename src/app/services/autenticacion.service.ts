@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
   providedIn: 'root'
 })
 export class AutenticacionService {
-  private usuarioPrueba = { nombre: 'usuario1', contrasena: '1234', nivel: 0, puntos: 0 };
+  private usuarioPrueba = { nombre: 'Nicolás', contrasena: '1234', nivel: 0, puntos: 0 };
   private usuarioAutenticado: any = null; // Variable para almacenar el usuario autenticado
 
   constructor(private router: Router) {}

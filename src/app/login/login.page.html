@@ -1,27 +1,62 @@
-<ion-header>
-  <ion-toolbar color="primary">
-    <ion-title>Login</ion-title>
+<!--BARRA SUPERIOR Y LOGO-->
+<ion-header class="ion-no-border">
+  <ion-toolbar class="barra-superior" color="primary">
+    <ion-row class="ion-justify-content-center ion-align-items-center logo1">
+      <ion-col size="auto">
+        <ion-img src="assets/images/logo2.png" alt="Logo"></ion-img>
+      </ion-col>
+    </ion-row>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true" class="ion-padding" color="background">
+<div class="shapedividers_com-4940"></div>
+<!--este es el diseño inicial de la parte superior, la clase debe llamarse asi ya que es un formato de una pagina que da bordes lindos-->
+
+<!--LOGO GATO-->
+<ion-content [fullscreen]="true" class="ion-padding custom-background">
+  <ion-grid>
+    <ion-row class="ion-justify-content-center ion-align-items-center logo-gato">
+      <ion-col size="auto">
+        <app-iconanimated></app-iconanimated>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+
+
+  <!--FORMULARIO DE INGRESO-->
+
   <form (ngSubmit)="iniciarSesion()">
     <ion-item lines="full">
-      <ion-label position="floating" color="secondary">Usuario</ion-label>
+      <ion-label position="floating"><ion-icon name="person" class="icon-size" color="secondary"></ion-icon></ion-label>
       <ion-input [(ngModel)]="usuario" name="usuario" required color="primary"></ion-input>
     </ion-item>
 
-    <ion-item lines="full">
-      <ion-label position="floating" color="secondary">Contraseña</ion-label>
-      <ion-input [(ngModel)]="contrasena" type="password" name="contrasena" required color="primary"></ion-input>
+    <ion-item lines="full" class="custom-ion-item">
+      <ion-label position="floating"><ion-icon name="lock-closed" color="secondary"
+          class="icon-size"></ion-icon></ion-label>
+      <ion-input [(ngModel)]="contrasena" [type]="mostrarContrasena ? 'text' : 'password'" name="contrasena" required
+        color="primary"></ion-input>
+      <!-- icono  de ojito ayudante -->
+      <ion-icon [name]="mostrarContrasena ? 'eye-off' : 'eye'" slot="end" (click)="togglePasswordVisibility()"
+        class="icon-eye"></ion-icon>
     </ion-item>
 
-    <ion-button expand="full" type="submit" color="secondary" class="boton-ingresar">INGRESAR</ion-button>
+    <!--BOTON DE INGRESO-->
+    <ion-list class="btn-login">
+      <ion-button expand="default" type="submit" class="boton-ingresar">INGRESAR</ion-button>
+    </ion-list>
+    <!--LINK DE RECUPERACION DE CONTRASEÑA-->
 
-    <ion-text color="medium" class="forgot-password-link">
-      <a (click)="irARecuperarContrasena()">¿Olvidaste tu contraseña?</a>
+    <ion-text color="medium" class="respass">
+      <ion-button fill="clear" (click)="irARecuperarContrasena()">¿Olvidaste tu contraseña?</ion-button>
     </ion-text>
 
-    <p *ngIf="mensajeError" class="error">{{ mensajeError }}</p>
+    
+
+
+    <!--VALIDACION DE INGRESO (MENSAJE DE ERROR)-->
+
+    <ion-text *ngIf="mensajeError" class="error">{{ mensajeError }}</ion-text>
   </form>
 </ion-content>

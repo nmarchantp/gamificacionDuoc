@@ -1,27 +1,37 @@
-<ion-header>
+<ion-header class="ion-no-border">
   <ion-toolbar color="primary">
-    <ion-title>Inicio</ion-title>
-    <ion-buttons slot="end">
-      <ion-button (click)="cerrarSesion()" color="danger"> 
-        <ion-icon slot="icon-only" name="log-out-outline"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
-</ion-header>
+    <ion-title>¡Bienvenido, {{ nombreUsuario }}!</ion-title>
+    <ion-buttons slot="end"></ion-buttons>
+      <ion-buttons slot="end">
+        <!-- Reemplaza el ion-button por el botón de Angular Material con menú -->
+        <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Menu">
+          <mat-icon color="white">more_vert</mat-icon>
+        </button>
+        <mat-menu #menu="matMenu">
+          <button mat-menu-item (click)="cerrarSesion()">
+            <mat-icon>logout</mat-icon>
+            <span>Cerrar Sesión</span>
+          </button>
+        </mat-menu>
+      </ion-buttons>
+    </ion-toolbar>
+  </ion-header>
+
+<div class="shapedividers_com-4940"></div>
 
 <ion-content [fullscreen]="true" class="ion-padding" color="background">
   <!-- Bienvenida al usuario -->
-  <ion-card color="secondary" class="bienvenida-card">
+  <ion-card color="primary" class="bienvenida-card">
     <ion-card-header>
-      <ion-item lines="none" color="secondary">
+      <ion-item lines="none" color="primary">
         <ion-avatar slot="start">
           <!-- Imagen de perfil del usuario -->
           <ion-img src="assets/icon/perfil.jpeg" alt="Foto de perfil"></ion-img>
         </ion-avatar>
         <ion-label>
-          <ion-card-title>Bienvenido, {{ nombreUsuario }}!</ion-card-title>
+          <ion-card-title>{{ nombreUsuario }}</ion-card-title>
           <ion-text>
-            <ion-text class="info-text">Estás en el nivel: {{ nivelUsuario }}</ion-text>
+            <ion-text class="info-text">Level: {{ nivelUsuario }}</ion-text>
             <ion-text class="info-text">Tienes {{ puntosUsuario }} puntos.</ion-text>
           </ion-text>
         </ion-label>
