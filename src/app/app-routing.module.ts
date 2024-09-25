@@ -37,6 +37,11 @@ const routes: Routes = [
  //   path: '**',
  //   component: MiComponente404
  // },
+  //para page
+// {
+//   path: '**',
+// loadchildren:() => import('./page-not-found/page-not-found.module').then(m.PageNotFoundModule)
+  
 ];
 
 @NgModule({
