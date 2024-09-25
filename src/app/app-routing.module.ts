@@ -33,7 +33,7 @@ const routes: Routes = [
       import('./resetpass/resetpass.module').then((m) => m.ResetpassPageModule)
   },
  // {
-//Esto es para pagina de redirigir un error 404
+//Esto es para pagina de redirigir un error 404 (recordar crear una pagina para error con un gatito)
  //   path: '**',
  //   component: MiComponente404
  // },
