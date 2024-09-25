@@ -32,6 +32,11 @@ const routes: Routes = [
     loadChildren: () =>
       import('./resetpass/resetpass.module').then((m) => m.ResetpassPageModule)
   },
+ // {
+//Esto es para pagina de redirigir un error 404
+ //   path: '**',
+ //   component: MiComponente404
+ // },
 ];
 
 @NgModule({
