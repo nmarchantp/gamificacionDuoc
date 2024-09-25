@@ -3,6 +3,8 @@ import { Routes, RouterModule } from '@angular/router';
 
 import { LoginPage } from './login.page';
 
+//todas las rutas que indico acá se cargan en la parte de abajo//
+
 const routes: Routes = [
   {
     path: '',
