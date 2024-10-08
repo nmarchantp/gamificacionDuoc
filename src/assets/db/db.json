@@ -1,0 +1,19 @@
+{
+    "database":"gamificacion.db",
+    "version": 1,
+    "encrypted": false,
+    "mode": "full",
+    "tables": [
+        {
+            "name": "usuario",
+            "schema": [
+                {
+                    "column": "id_usuario",
+                    "value": "TEXT NOT NULL PRIMARY KEY"
+                }
+            ]
+        }
+    ]
+
+}
+
