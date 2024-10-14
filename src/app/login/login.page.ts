@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { AutenticacionService } from '../services/autenticacion.service';
+import { SqliteService } from '../services/sqlite.service';
 import { Router } from '@angular/router';
 import { AlertController } from '@ionic/angular';
 
@@ -12,33 +12,45 @@ export class LoginPage {
   usuario = '';
   contrasena = '';
   mensajeError = '';
-  mostrarContrasena: boolean = false; // agregue la funcion de que se pueda visualizar la contraseña para comprobar que este correcta al seleccionar el tipico icono de ojo 
+  mostrarContrasena: boolean = false;
 
-  constructor(private autenticacionService: AutenticacionService, private router: Router, private alertController: AlertController) {}
+  constructor(
+    private sqliteService: SqliteService, 
+    private router: Router, 
+    private alertController: AlertController
+  ) {}
 
-  async iniciarSesion() { //async es para que aparezca como pop up
+  async iniciarSesion() {
     this.mensajeError = '';
-    const esValido = this.autenticacionService.iniciarSesion(this.usuario, this.contrasena);
-    
+    // llama al método login en SqliteService para verificar el usuario
+    // se reemplaza el metodo autenticacion
+    // console.log("user:",this.usuario," pass:",this.contrasena);
+    const esValido = await this.sqliteService.login(this.usuario, this.contrasena);
+    console.log(esValido);
     if (esValido) {
-      this.router.navigate(['/tabs/home']); // Redirige a la página de tabs con el home
+      console.log(esValido);
+      this.router.navigate(['/tabs/home']);
     } else {
       const alert = await this.alertController.create({
-        header:'¡Ouch!',
-        message:'Usuario o contraseña incorrectos. Inténtalo de nuevo.',
+        header: '¡Ouch!',
+        message: 'Usuario o contraseña incorrectos. Inténtalo de nuevo.',
         buttons: ['Reintentar']
       });
-      await alert.present();//para evitar un bucle en la alerta
-      return;
-      // this.mensajeError = 'Usuario o contraseña incorrectos. Inténtalo de nuevo.';
+      await alert.present();
     }
   }
 
   togglePasswordVisibility() {
-    this.mostrarContrasena = !this.mostrarContrasena; // muestra la contraseña para facilitar el ingreso del usuario
+    this.mostrarContrasena = !this.mostrarContrasena;
   }
 
   irARecuperarContrasena() {
-    this.router.navigate(['/resetpass']); // Redirige a la página de restablecimiento de contraseña
+    this.router.navigate(['/resetpass']);
+  }
+
+  irARegistro() {
+    this.router.navigate(['/registro']); 
   }
 }
+
+

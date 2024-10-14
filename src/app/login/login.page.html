@@ -10,7 +10,6 @@
 </ion-header>
 
 <div class="shapedividers_com-4940"></div>
-<!--este es el diseño inicial de la parte superior, la clase debe llamarse asi ya que es un formato de una pagina que da bordes lindos-->
 
 <!--LOGO GATO-->
 <ion-content [fullscreen]="true" class="ion-padding custom-background">
@@ -22,19 +21,19 @@
     </ion-row>
   </ion-grid>
 
-
-
   <!--FORMULARIO DE INGRESO-->
-
   <form (ngSubmit)="iniciarSesion()">
     <ion-item lines="full">
-      <ion-label position="floating"><ion-icon name="person" class="icon-size" color="secondary"></ion-icon></ion-label>
+      <ion-label position="floating">
+        <ion-icon name="person" class="icon-size" color="secondary"></ion-icon>
+      </ion-label>
       <ion-input [(ngModel)]="usuario" name="usuario" required color="primary"></ion-input>
     </ion-item>
 
     <ion-item lines="full" class="custom-ion-item">
-      <ion-label position="floating"><ion-icon name="lock-closed" color="secondary"
-          class="icon-size"></ion-icon></ion-label>
+      <ion-label position="floating">
+        <ion-icon name="lock-closed" color="secondary" class="icon-size"></ion-icon>
+      </ion-label>
       <ion-input [(ngModel)]="contrasena" [type]="mostrarContrasena ? 'text' : 'password'" name="contrasena" required
         color="primary"></ion-input>
       <!-- icono  de ojito ayudante -->
@@ -44,19 +43,20 @@
 
     <!--BOTON DE INGRESO-->
     <ion-list class="btn-login">
-      <ion-button expand="default" type="submit" class="boton-ingresar">INGRESAR</ion-button>
+      <ion-button expand="default" type="submit" class="boton-ingresar" (click)="iniciarSesion()">INGRESAR</ion-button>
     </ion-list>
-    <!--LINK DE RECUPERACION DE CONTRASEÑA-->
 
+    <!--LINK DE RECUPERACION DE CONTRASEÑA-->
     <ion-text color="medium" class="respass">
       <ion-button fill="clear" (click)="irARecuperarContrasena()">¿Olvidaste tu contraseña?</ion-button>
     </ion-text>
 
-    
-
+    <!--BOTÓN DE REGISTRO-->
+    <ion-text color="medium" class="register">
+      <ion-button fill="clear" (click)="irARegistro()">¿No tienes cuenta? Regístrate</ion-button>
+    </ion-text>
 
     <!--VALIDACION DE INGRESO (MENSAJE DE ERROR)-->
-
     <ion-text *ngIf="mensajeError" class="error">{{ mensajeError }}</ion-text>
   </form>
 </ion-content>

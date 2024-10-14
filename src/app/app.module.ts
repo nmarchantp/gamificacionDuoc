@@ -1,7 +1,7 @@
 import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
-import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import { BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { createAnimation } from '@ionic/core';
@@ -11,6 +11,7 @@ import { AppRoutingModule } from './app-routing.module';
 
 import { defineCustomElements as jeepSqlite} from 'jeep-sqlite/loader';
 import { HttpClientModule } from '@angular/common/http';
+
 
 // Define una animación nula
 const noAnimation = (navEl: HTMLElement, opts: any) => {

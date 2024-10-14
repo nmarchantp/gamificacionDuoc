@@ -1,0 +1,42 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="primary">
+    <ion-title>Registro de Usuario</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <form (ngSubmit)="registro()">
+    <!-- Nombre de Usuario -->
+    <ion-item>
+      <ion-label position="floating">Nombre de Usuario</ion-label>
+      <ion-input type="text" [(ngModel)]="username" name="username" required></ion-input>
+    </ion-item>
+
+    <!-- Correo Electrónico -->
+    <ion-item>
+      <ion-label position="floating">Correo Electrónico</ion-label>
+      <ion-input type="email" [(ngModel)]="email" name="email" required></ion-input>
+    </ion-item>
+
+    <!-- Contraseña -->
+    <ion-item>
+      <ion-label position="floating">Contraseña</ion-label>
+      <ion-input type="password" [(ngModel)]="password" name="password" required></ion-input>
+    </ion-item>
+
+    <!-- Botón de Registro -->
+    <ion-button expand="full" type="submit" color="primary" class="ion-margin-top">
+      Registrar
+    </ion-button>
+
+    <!-- Botón para volver al Login -->
+    <ion-button expand="full" fill="clear" color="medium" (click)="volverALogin()">
+      Ya tengo una cuenta
+    </ion-button>
+
+    <!-- Mensaje de error si el registro falla -->
+    <ion-text color="danger" *ngIf="mensajeError" class="ion-text-center">
+      <p>{{ mensajeError }}</p>
+    </ion-text>
+  </form>
+</ion-content>

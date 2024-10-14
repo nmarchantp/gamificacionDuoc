@@ -10,7 +10,6 @@ import { SqliteService } from './services/sqlite.service';
   styleUrls: ['app.component.scss'],
 })
 
-
 export class AppComponent {
 
   public isWeb: boolean;
@@ -24,15 +23,21 @@ export class AppComponent {
     this.initApp();
   }
 
-initApp(){
-  this.platform.ready().then( async () =>{
-    const info = await Device.getInfo();
-    this.isWeb = info.platform == 'web';
-
-    this.sqlite.init();
-    this.sqlite.dbready.subscribe( load => {
-      this.load = load;
-    })    
-  })
-}
+  async initApp() {
+    try {
+      await this.platform.ready();
+      const info = await Device.getInfo();
+      this.isWeb = info.platform === 'web';
+      console.log("Is running on web:", this.isWeb);
+  
+      await this.sqlite.init();
+      this.sqlite.dbready.subscribe(load => {
+        this.load = load;
+        console.log("satus de base de datos:", this.load);
+      });
+    } catch (error) {
+      console.error("Error durante la inicialización de la aplicación:", error);
+    }
+  }
+  
 }
