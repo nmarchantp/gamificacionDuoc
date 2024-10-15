@@ -9,8 +9,9 @@ import { AlertController } from '@ionic/angular';
   styleUrls: ['./login.page.scss']
 })
 export class LoginPage {
-  usuario = '';
-  contrasena = '';
+  usuarios: any[] = [];
+  usuarioSeleccionado: any;
+  contrasena: string = '';
   mensajeError = '';
   mostrarContrasena: boolean = false;
 
@@ -20,25 +21,37 @@ export class LoginPage {
     private alertController: AlertController
   ) {}
 
+
+  async ngOnInit() {
+    this.usuarios = await this.sqliteService.getAllUsers(); // Carga los usuarios desde SQLite
+  }
+
+  onUserChange(event: any) {
+    // Asigna automáticamente la contraseña del usuario seleccionado
+    this.contrasena = event.detail.value.password || '';
+  }
+
   async iniciarSesion() {
     this.mensajeError = '';
     // llama al método login en SqliteService para verificar el usuario
     // se reemplaza el metodo autenticacion
     // console.log("user:",this.usuario," pass:",this.contrasena);
-    const esValido = await this.sqliteService.login(this.usuario, this.contrasena);
-    console.log(esValido);
-    if (esValido) {
-      console.log(esValido);
-      this.router.navigate(['/tabs/home']);
-    } else {
-      const alert = await this.alertController.create({
-        header: '¡Ouch!',
-        message: 'Usuario o contraseña incorrectos. Inténtalo de nuevo.',
-        buttons: ['Reintentar']
-      });
-      await alert.present();
+    if (this.usuarioSeleccionado && this.contrasena) {
+      const esValido = await this.sqliteService.login(this.usuarioSeleccionado.username, this.contrasena);
+
+      if (esValido) {
+        this.router.navigate(['/home']);
+      } else {
+        const alert = await this.alertController.create({
+          header: '¡Ouch!',
+          message: 'Contraseña incorrecta. Inténtalo de nuevo.',
+          buttons: ['Reintentar']
+        });
+        await alert.present();
+      }
     }
   }
+  
 
   togglePasswordVisibility() {
     this.mostrarContrasena = !this.mostrarContrasena;

@@ -30,6 +30,7 @@ export class AppComponent {
       this.isWeb = info.platform === 'web';
       console.log("Is running on web:", this.isWeb);
   
+      // await this.sqlite.deleteDatabase();
       await this.sqlite.init();
       this.sqlite.dbready.subscribe(load => {
         this.load = load;

@@ -27,15 +27,29 @@
       <ion-label position="floating">
         <ion-icon name="person" class="icon-size" color="secondary"></ion-icon>
       </ion-label>
-      <ion-input [(ngModel)]="usuario" name="usuario" required color="primary"></ion-input>
+      <ion-select 
+        [(ngModel)]="usuarioSeleccionado" 
+        name="selectedUser"
+        interface="popover" 
+        placeholder="Selecciona un usuario"
+        (ionChange)="onUserChange($event)">
+        <ion-select-option *ngFor="let user of usuarios" [value]="user">
+          {{ user.username }}
+        </ion-select-option>
+      </ion-select>
     </ion-item>
 
     <ion-item lines="full" class="custom-ion-item">
       <ion-label position="floating">
         <ion-icon name="lock-closed" color="secondary" class="icon-size"></ion-icon>
       </ion-label>
-      <ion-input [(ngModel)]="contrasena" [type]="mostrarContrasena ? 'text' : 'password'" name="contrasena" required
-        color="primary"></ion-input>
+      <ion-label position="floating"></ion-label>
+      <ion-input 
+        type="password"
+        [(ngModel)]="contrasena" 
+        name="password"
+        required>
+      </ion-input>
       <!-- icono  de ojito ayudante -->
       <ion-icon [name]="mostrarContrasena ? 'eye-off' : 'eye'" slot="end" (click)="togglePasswordVisibility()"
         class="icon-eye"></ion-icon>

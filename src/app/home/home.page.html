@@ -24,15 +24,14 @@
   <ion-card color="primary" class="bienvenida-card">
     <ion-card-header>
       <ion-item lines="none" color="primary">
-        <ion-avatar slot="start">
-          <!-- Imagen de perfil del usuario -->
-          <ion-img src="assets/icon/perfil.jpeg" alt="Foto de perfil"></ion-img>
+        <ion-avatar>
+          <img [src]="fotoUsuario" alt="Foto del Usuario">
         </ion-avatar>
         <ion-label>
           <ion-card-title>{{ nombreUsuario }}</ion-card-title>
           <ion-text>
-            <ion-text class="info-text">Level: {{ nivelUsuario }}</ion-text>
-            <ion-text class="info-text">Tienes {{ puntosUsuario }} puntos.</ion-text>
+            <ion-text class="info-text">Tu Nivel: {{ nivelUsuario }}</ion-text>
+            <ion-text class="info-text">Tienes {{ puntosUsuario }} puntos acumulados.</ion-text>
           </ion-text>
         </ion-label>
       </ion-item>

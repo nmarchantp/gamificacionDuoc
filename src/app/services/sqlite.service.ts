@@ -4,7 +4,7 @@ import { CapacitorSQLite, JsonSQLite } from '@capacitor-community/sqlite';
 import { Capacitor } from '@capacitor/core';
 import { Device } from '@capacitor/device';
 import { Preferences } from '@capacitor/preferences';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -25,6 +25,8 @@ export class SqliteService {
     this.dbName = 'gamificationDB';
   }
   async init() {
+    //habialitar remove para crearla base de dats nuevamente
+    await Preferences.remove({ key: 'first_setup_key' });
     const info = await Device.getInfo();
     const sqlite = CapacitorSQLite as any;
   
@@ -43,17 +45,28 @@ export class SqliteService {
   
     // verifico si ya hizo la configuración inicial
     const dbSetup = await Preferences.get({ key: 'first_setup_key' });
+    console.log('paso por la configuracion inicial')
+    console.log('valor dbSetup first_setup_key: ',dbSetup.value);
   
     if (!dbSetup.value) {
-      // solo la primera vez
-      await this.downloadDatabase();
+      // solo la primera vez, se crea la conexiion y crea las tablas
+      // await this.downloadDatabase();
+      await CapacitorSQLite.createConnection({ database: this.dbName });
+      await CapacitorSQLite.open({ database: this.dbName });
+      await this.createTables(); 
+
+      await this.traerUsuariosApi();
+
       await Preferences.set({ key: 'first_setup_key', value: '1' });
+      console.log('base de datos creada y usuarios cargados desde la api')
+      this.dbready.next(true);
     } else {
       // si la base de datos ya existe solo abre la conexion
       this.dbName = await this.getDbName();
       await CapacitorSQLite.createConnection({ database: this.dbName });
       await CapacitorSQLite.open({ database: this.dbName });
       this.dbready.next(true);
+      console.log('Conectado a la base de datos')
     }
   }
   
@@ -61,40 +74,49 @@ export class SqliteService {
   async createTables() {
     try {
       const createUsuariosTable = `
-        CREATE TABLE IF NOT EXISTS Usuarios (
-          id_user INTEGER PRIMARY KEY AUTOINCREMENT,
-          username TEXT NOT NULL,
-          email TEXT UNIQUE NOT NULL,
-          password TEXT NOT NULL,
-          nivel INTEGER DEFAULT 1, 
-          puntos_totales INTEGER DEFAULT 0
-        );
-      `;
+      CREATE TABLE IF NOT EXISTS Usuarios (
+        id_user INTEGER PRIMARY KEY AUTOINCREMENT,
+        username TEXT NOT NULL UNIQUE,
+        email TEXT NOT NULL UNIQUE,
+        password TEXT NOT NULL,
+        foto TEXT
+      );
+    `;
+
+      const createNivelesTable = `
+      CREATE TABLE IF NOT EXISTS Niveles (
+        id_nivel INTEGER PRIMARY KEY AUTOINCREMENT,
+        id_user INTEGER NOT NULL,
+        nivel INTEGER DEFAULT 1, 
+        puntos_totales INTEGER DEFAULT 0,
+        FOREIGN KEY (id_user) REFERENCES Usuarios(id_user) ON DELETE CASCADE
+      );
+    `;
 
       const createDesafiosTable = `
-        CREATE TABLE IF NOT EXISTS Desafios (
-          id_desafio INTEGER PRIMARY KEY AUTOINCREMENT,
-          nombre_desafio TEXT NOT NULL,
-          descripcion TEXT,
-          puntos INTEGER NOT NULL
-        );
-      `;
+      CREATE TABLE IF NOT EXISTS Desafios (
+        id_desafio INTEGER PRIMARY KEY AUTOINCREMENT,
+        nombre_desafio TEXT NOT NULL,
+        descripcion TEXT,
+        puntos INTEGER NOT NULL
+      );
+    `;
 
       const createHistorialDesafiosTable = `
-        CREATE TABLE IF NOT EXISTS HistorialDesafios (
-          id_desafio_h INTEGER PRIMARY KEY AUTOINCREMENT,
-          id_user INTEGER,
-          id_desafio INTEGER,
-          fecha_completado DATETIME DEFAULT CURRENT_TIMESTAMP,
-          puntos_ganados INTEGER,
-          FOREIGN KEY (id_user) REFERENCES Usuarios(id_user),
-          FOREIGN KEY (id_desafio) REFERENCES Desafios(id_desafio)
-        );
-      `;
+      CREATE TABLE IF NOT EXISTS HistorialDesafios (
+        id_desafio_h INTEGER PRIMARY KEY AUTOINCREMENT,
+        id_user INTEGER,
+        id_desafio INTEGER,
+        fecha_completado DATETIME DEFAULT CURRENT_TIMESTAMP,
+        puntos_ganados INTEGER,
+        FOREIGN KEY (id_user) REFERENCES Usuarios(id_user),
+        FOREIGN KEY (id_desafio) REFERENCES Desafios(id_desafio)
+      );
+    `;
 
       await CapacitorSQLite.execute({ 
         database: this.dbName, 
-        statements: `${createUsuariosTable} ${createDesafiosTable} ${createHistorialDesafiosTable}` 
+        statements: `${createUsuariosTable} ${createNivelesTable} ${createDesafiosTable} ${createHistorialDesafiosTable}` 
       });
 
       console.log("Tablas creadas correctamente en la base de datos.");
@@ -103,40 +125,40 @@ export class SqliteService {
     }
   }
 
-  async downloadDatabase() {
-    this.http.get('assets/db/db.json').subscribe(
-      async (jsonExport: JsonSQLite) => {
-        const jsonstring = JSON.stringify(jsonExport);
-        const isValid = await CapacitorSQLite.isJsonValid({ jsonstring });
+  // async downloadDatabase() {
+  //   this.http.get('assets/db/db.json').subscribe(
+  //     async (jsonExport: JsonSQLite) => {
+  //       const jsonstring = JSON.stringify(jsonExport);
+  //       const isValid = await CapacitorSQLite.isJsonValid({ jsonstring });
   
-        if (isValid.result) {
-          this.dbName = jsonExport.database;
+  //       if (isValid.result) {
+  //         this.dbName = jsonExport.database;
   
-          // importo la base de datos desde el json
-          await CapacitorSQLite.importFromJson({ jsonstring });
-          console.log("Base de datos importada exitosamente desde JSON.");
+  //         // importo la base de datos desde el json
+  //         await CapacitorSQLite.importFromJson({ jsonstring });
+  //         console.log("Base de datos importada exitosamente desde JSON.");
   
-          // creo y abro la conexión
-          await CapacitorSQLite.createConnection({ database: this.dbName });
-          await CapacitorSQLite.open({ database: this.dbName });
+  //         // creo y abro la conexión
+  //         await CapacitorSQLite.createConnection({ database: this.dbName });
+  //         await CapacitorSQLite.open({ database: this.dbName });
           
-          // creo las tablas solo si es necesario
-          await this.createTables();
+  //         // creo las tablas solo si es necesario
+  //         await this.createTables();
   
-          // coloco el valor en preference para evitar una carga repetida
-          await Preferences.set({ key: 'first_setup_key', value: '1' });
-          await Preferences.set({ key: 'dbname', value: this.dbName });
+  //         // coloco el valor en preference para evitar una carga repetida
+  //         await Preferences.set({ key: 'first_setup_key', value: '1' });
+  //         await Preferences.set({ key: 'dbname', value: this.dbName });
   
-          this.dbready.next(true);
-        } else {
-          console.error("El JSON de la base de datos no es válido");
-        }
-      },
-      (error) => {
-        console.error("Error al descargar la base de datos JSON:", error);
-      }
-    );
-  }
+  //         this.dbready.next(true);
+  //       } else {
+  //         console.error("El JSON de la base de datos no es válido");
+  //       }
+  //     },
+  //     (error) => {
+  //       console.error("Error al descargar la base de datos JSON:", error);
+  //     }
+  //   );
+  // }
   
 
   async getDbName(){
@@ -151,23 +173,49 @@ export class SqliteService {
 
   async login(username: string, password: string): Promise<boolean> {
     try {
+      // primero consulta la base de datos
       const query = `SELECT * FROM Usuarios WHERE username = ? AND password = ?`;
       const result = await CapacitorSQLite.query({
         database: this.dbName,
         statement: query,
         values: [username, password]        
       });
-      console.log("usuario:",result.values);
 
       if (result.values && result.values.length > 0) {
         this.currentUser = result.values[0];
         this.isAuthenticated.next(true);
-        console.log("Usuario autenticado:", this.currentUser);
+        console.log("Usuario autenticado desde SQLite:", this.currentUser);
         return true;
-      } else {
-        console.error("Usuario o credenciales incorrectas");
+      }else{
         return false;
       }
+
+      // const apiResult: any = await this.http.get(this.apiUrl).toPromise();
+      // console.log(apiResult);
+      
+      // if (apiResult && apiResult.results && Array.isArray(apiResult.results)) {
+      //   const apiUser = apiResult.results.find((user: any) => 
+      //     user.login.username === username && user.login.password === password
+      //   );
+
+      //   if (apiUser) {
+      //     this.currentUser = {
+      //       username: apiUser.login.username,
+      //       password: apiUser.login.password,
+      //       name: `${apiUser.name.first} ${apiUser.name.last}`,
+      //       email: apiUser.email
+      //     };
+      //     this.isAuthenticated.next(true);
+      //     console.log("Usuario autenticado desde la API:", this.currentUser);
+      //     return true;
+      //   } else {
+      //     console.error("Usuario o credenciales incorrectas en ambas fuentes");
+      //   }
+      // } else {
+      //   console.error("La respuesta de la API no contiene la estructura esperada.");
+      // }
+      
+      
     } catch (error) {
       console.error("Error en la autenticación:", error);
       return false;
@@ -185,11 +233,11 @@ export class SqliteService {
         statement: query,
         values: [username, email, password, 1, 0] 
       });
-      const result = await CapacitorSQLite.query({
-        database: this.dbName,
-        statement: `SELECT * FROM Usuarios WHERE username = ? AND email = ?`,
-        values: [username, email]
-      });
+      // const result = await CapacitorSQLite.query({
+      //   database: this.dbName,
+      //   statement: `SELECT * FROM Usuarios WHERE username = ? AND email = ?`,
+      //   values: [username, email]
+      // });
       console.log("Usuario registrado correctamente");
       return true;
     } catch (error) {
@@ -198,12 +246,113 @@ export class SqliteService {
     }
   }
   
-  getCurrentUser() {
-    return this.currentUser;
+  async getCurrentUser() {
+    if (!this.currentUser) return null;
+  
+    try {
+      const query = `
+        SELECT Usuarios.username, Usuarios.email, Usuarios.foto, Niveles.nivel, Niveles.puntos_totales 
+        FROM Usuarios 
+        JOIN Niveles ON Usuarios.id_user = Niveles.id_user 
+        WHERE Usuarios.id_user = ?;
+      `;
+      const result = await CapacitorSQLite.query({
+        database: this.dbName,
+        statement: query,
+        values: [this.currentUser.id_user]
+      });
+  
+      if (result.values && result.values.length > 0) {
+        const user = result.values[0];
+        return {
+          username: user.username,
+          email: user.email,
+          foto: user.foto,
+          nivel: user.nivel,
+          puntos_totales: user.puntos_totales
+        };
+      } else {
+        console.error("Usuario no encontrado en la base de datos.");
+        return null;
+      }
+    } catch (error) {
+      console.error("Error al obtener el usuario autenticado:", error);
+      return null;
+    }
   }
+  
 
   logout() {
     this.currentUser = null;
     this.isAuthenticated.next(false);
   }
+
+  async deleteDatabase() {
+    try {
+      await CapacitorSQLite.deleteDatabase({ database: this.dbName });
+      console.log("Base de datos eliminada exitosamente.");
+    } catch (error) {
+      console.error("Error al eliminar la base de datos:", error);
+    }
+  }
+  
+
+  async traerUsuariosApi() {
+    try {
+      const apiUrl = 'https://randomuser.me/api/?results=5';
+      const apiResult: any = await this.http.get(apiUrl).toPromise();
+  
+      if (apiResult && apiResult.results && Array.isArray(apiResult.results)) {
+        for (let user of apiResult.results) {
+          const username = user.login.username;
+          const password = user.login.password;
+          const email = user.email;
+          const foto = user.picture.large;
+          
+          //inserto en la tabla Usuarios
+          const insertUserQuery = `
+            INSERT INTO Usuarios (username, email, password, foto)
+            VALUES (?, ?, ?, ?);
+          `;
+          const insertUserResult = await CapacitorSQLite.run({
+            database: this.dbName,
+            statement: insertUserQuery,
+            values: [username, email, password, foto]
+          });
+  
+          // Obtiene el ID del usuario insertado
+          const id_user = insertUserResult.changes.lastId;
+  
+          // Inserta en la tabla Niveles relacionado con el id_user
+          const insertNivelQuery = `
+            INSERT INTO Niveles (id_user, nivel, puntos_totales)
+            VALUES (?, ?, ?);
+          `;
+          await CapacitorSQLite.run({
+            database: this.dbName,
+            statement: insertNivelQuery,
+            values: [id_user, 1, 0] 
+          });
+  
+          console.log(`Usuario ${username} y su nivel inicial han sido guardados en la base de datos.`);
+        }
+      } else {
+        console.error("La respuesta de la API no contiene usuarios válidos");
+      }
+    } catch (error) {
+      console.error("Error al obtener y guardar los usuarios de la API:", error);
+    }
+  }
+  
+
+  async getAllUsers(): Promise<any[]> {
+    const query = `SELECT * FROM Usuarios`;
+    const result = await CapacitorSQLite.query({
+      database: this.dbName,
+      statement: query,
+      values: []
+    });
+    return result.values || [];
+  }
+
 }

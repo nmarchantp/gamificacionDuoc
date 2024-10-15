@@ -11,6 +11,7 @@ import { AppRoutingModule } from './app-routing.module';
 
 import { defineCustomElements as jeepSqlite} from 'jeep-sqlite/loader';
 import { HttpClientModule } from '@angular/common/http';
+import { UserApiService } from './services/user-api.service';
 
 
 // Define una animación nula
@@ -39,7 +40,7 @@ jeepSqlite(window)
     }),
     AppRoutingModule,HttpClientModule
   ],
-  providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }],
+  providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }, UserApiService],
   bootstrap: [AppComponent],
   schemas: [
     CUSTOM_ELEMENTS_SCHEMA

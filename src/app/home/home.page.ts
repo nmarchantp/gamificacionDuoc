@@ -13,6 +13,7 @@ export class HomePage implements OnInit {
   nombreUsuario: string = '';
   nivelUsuario: number = 0;
   puntosUsuario: number = 0;
+  fotoUsuario: string = '';
   primerosDesafios: any[] = [];
 
   // constructor(private autenticacionService: AutenticacionService, private router: Router, private desafiosService: DesafiosService) {}
@@ -22,19 +23,12 @@ export class HomePage implements OnInit {
     private desafiosService: DesafiosService
   ) {}
 
-  ngOnInit() {
+  async ngOnInit() {
     // obtengo datos del usuario autenticado desde el servicio
     // const usuario = this.autenticacionService.obtenerUsuarioAutenticado();
-    const usuario = this.sqliteService.getCurrentUser();
-    if (usuario) {
-      console.log(usuario);
-      this.nombreUsuario = usuario.username;
-      this.nivelUsuario = usuario.nivel;
-      this.puntosUsuario = usuario.puntos_totales;
-    }
-    this.actualizarUsuario();
-    //Me traigo los primeros 3 desafios para mostrar
+    await this.actualizarUsuario();
     this.primerosDesafios = this.desafiosService.obtenerDesafios().slice(0, 3);
+    
   }
 
   cerrarSesion() {
@@ -44,13 +38,14 @@ export class HomePage implements OnInit {
     this.router.navigate(['/login']); // Redirige al login
   }
 
-  actualizarUsuario() {
+  async actualizarUsuario() {
     // const usuario = this.autenticacionService.obtenerUsuarioAutenticado();
-    const usuario = this.sqliteService.getCurrentUser();
+    const usuario = await this.sqliteService.getCurrentUser();
     if (usuario) {
       this.nombreUsuario = usuario.username;
       this.nivelUsuario = usuario.nivel;
       this.puntosUsuario = usuario.puntos_totales;
+      this.fotoUsuario = usuario.foto;
     }
   }
 }

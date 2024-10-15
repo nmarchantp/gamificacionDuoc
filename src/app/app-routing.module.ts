@@ -43,7 +43,11 @@ const routes: Routes = [
   {
     path: '**', 
     redirectTo: 'notfound' 
+  },  {
+    path: 'prueba-api',
+    loadChildren: () => import('./prueba-api/prueba-api.module').then( m => m.PruebaApiPageModule)
   }
+
   
 ];
 
