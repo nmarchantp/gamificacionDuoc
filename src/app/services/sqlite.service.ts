@@ -4,7 +4,9 @@ import { CapacitorSQLite, JsonSQLite } from '@capacitor-community/sqlite';
 import { Capacitor } from '@capacitor/core';
 import { Device } from '@capacitor/device';
 import { Preferences } from '@capacitor/preferences';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, catchError, Observable, of, retry } from 'rxjs';
+import { Storage  } from '@capacitor/storage';
+
 
 @Injectable({
   providedIn: 'root'
@@ -29,7 +31,7 @@ export class SqliteService {
     await Preferences.remove({ key: 'first_setup_key' });
     const info = await Device.getInfo();
     const sqlite = CapacitorSQLite as any;
-  
+
     if (info.platform === 'android') {
       try {
         await sqlite.requestPermissions();
@@ -47,29 +49,40 @@ export class SqliteService {
     const dbSetup = await Preferences.get({ key: 'first_setup_key' });
     console.log('paso por la configuracion inicial')
     console.log('valor dbSetup first_setup_key: ',dbSetup.value);
-  
-    if (!dbSetup.value) {
-      // solo la primera vez, se crea la conexiion y crea las tablas
-      // await this.downloadDatabase();
-      await CapacitorSQLite.createConnection({ database: this.dbName });
-      await CapacitorSQLite.open({ database: this.dbName });
-      await this.createTables(); 
 
-      await this.traerUsuariosApi();
-
-      await Preferences.set({ key: 'first_setup_key', value: '1' });
-      console.log('base de datos creada y usuarios cargados desde la api')
+    //veriofico si existe en localstorage
+    const localUser = await this.getUsuarioLocalStorage();
+    if(localUser){
+      this.currentUser = localUser;
+      this.isAuthenticated.next(true);
+      console.log('usuario existe en localstorage', this.currentUser);
       this.dbready.next(true);
-    } else {
-      // si la base de datos ya existe solo abre la conexion
-      this.dbName = await this.getDbName();
-      await CapacitorSQLite.createConnection({ database: this.dbName });
-      await CapacitorSQLite.open({ database: this.dbName });
-      this.dbready.next(true);
-      console.log('Conectado a la base de datos')
+      return;
     }
-  }
-  
+
+    try{
+        if (!dbSetup.value) {
+          // solo la primera vez, se crea la conexiion y crea las tablas
+          // await this.downloadDatabase();
+          await CapacitorSQLite.createConnection({ database: this.dbName });
+          await CapacitorSQLite.open({ database: this.dbName });
+          await this.createTables();
+          await this.traerUsuariosApi();
+          await Preferences.set({ key: 'first_setup_key', value: '1' });
+          console.log('Base de datos creada y usuarios cargados desde la API');
+        } else {
+          // si la base de datos ya existe solo abre la conexion
+          this.dbName = await this.getDbName();
+          await CapacitorSQLite.createConnection({ database: this.dbName });
+          await CapacitorSQLite.open({ database: this.dbName });
+          console.log('Conectado a la base de datos existente');
+        }
+        this.dbready.next(true);
+      } catch (error) {
+        console.error("Error durante la configuración de la base de datos:", error);
+        this.dbready.next(false);
+      }    
+  }  
 
   async createTables() {
     try {
@@ -185,8 +198,16 @@ export class SqliteService {
         this.currentUser = result.values[0];
         this.isAuthenticated.next(true);
         console.log("Usuario autenticado desde SQLite:", this.currentUser);
+
+        //Por si es un usuario registrado y no desde la Api
+        await Storage.set({
+          key: 'currentUser',
+          value: JSON.stringify(this.currentUser)
+        });
+
         return true;
       }else{
+        console.error("Usuario o credenciales incorrectas en SQLite.");
         return false;
       }
 
@@ -218,7 +239,16 @@ export class SqliteService {
       
     } catch (error) {
       console.error("Error en la autenticación:", error);
+      const storedUser = await this.getUsuarioLocalStorage();
+    if (storedUser && storedUser.username === username && storedUser.password === password) {
+      this.currentUser = storedUser;
+      this.isAuthenticated.next(true);
+      console.log("Usuario autenticado desde localStorage:", this.currentUser);
+      return true;
+    } else {
+      console.error("Usuario o credenciales incorrectas en localStorage.");
       return false;
+    }
     }
   }
 
@@ -264,13 +294,21 @@ export class SqliteService {
   
       if (result.values && result.values.length > 0) {
         const user = result.values[0];
-        return {
+        const userData = {
           username: user.username,
           email: user.email,
           foto: user.foto,
           nivel: user.nivel,
           puntos_totales: user.puntos_totales
         };
+
+        //guardo los datos localmente (localstorage)
+        await Storage.set({
+          key: 'currentUser',
+          value:JSON.stringify(userData)
+        });
+        return userData;
+
       } else {
         console.error("Usuario no encontrado en la base de datos.");
         return null;
@@ -300,7 +338,15 @@ export class SqliteService {
   async traerUsuariosApi() {
     try {
       const apiUrl = 'https://randomuser.me/api/?results=5';
-      const apiResult: any = await this.http.get(apiUrl).toPromise();
+    
+    // Realiza la solicitud HTTP con retry en caso de fallo
+      const apiResult: any = await this.http.get(apiUrl).pipe(
+        retry(3), // Intenta 3 veces en caso de error
+        catchError(error => {
+        console.error("Error en la solicitud de API después de reintentar:", error);
+        return of(null); // Devuelve null en caso de fallo después de 3 intentos
+      })
+    ).toPromise();
   
       if (apiResult && apiResult.results && Array.isArray(apiResult.results)) {
         for (let user of apiResult.results) {
@@ -333,8 +379,14 @@ export class SqliteService {
             statement: insertNivelQuery,
             values: [id_user, 1, 0] 
           });
-  
           console.log(`Usuario ${username} y su nivel inicial han sido guardados en la base de datos.`);
+          //guardo el susuario en localstorage
+          const userData = { username, email, password, foto, nivel: 1, puntos_totales: 0 };
+          await Storage.set({
+          key: `user_${id_user}`,
+          value: JSON.stringify(userData)
+          });  
+          console.log(`Usuario ${username} y su nivel inicial han sido guardados en localstorage.`);
         }
       } else {
         console.error("La respuesta de la API no contiene usuarios válidos");
@@ -355,4 +407,10 @@ export class SqliteService {
     return result.values || [];
   }
 
+//metodo para verificar si el susuario esta en local storage antes de consultar la bd
+  async getUsuarioLocalStorage(): Promise<any> {
+    const { value } = await Storage.get({ key: 'currentUser' });
+    return value ? JSON.parse(value) : null;
+  }
+  
 }
