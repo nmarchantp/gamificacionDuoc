@@ -1,7 +1,9 @@
 import { Component } from '@angular/core';
 import { SqliteService } from '../services/sqlite.service';
-import { Router } from '@angular/router';
+import { NavigationExtras, Router } from '@angular/router';
 import { AlertController } from '@ionic/angular';
+import { Storage } from '@capacitor/storage';
+
 
 @Component({
   selector: 'app-login',
@@ -10,7 +12,7 @@ import { AlertController } from '@ionic/angular';
 })
 export class LoginPage {
   usuarios: any[] = [];
-  usuarioSeleccionado: any;
+  usuario: string = '';
   contrasena: string = '';
   mensajeError = '';
   mostrarContrasena: boolean = false;
@@ -22,36 +24,42 @@ export class LoginPage {
   ) {}
 
 
-  async ngOnInit() {
-    this.usuarios = await this.sqliteService.getAllUsers(); // Carga los usuarios desde SQLite
-  }
+  // async ngOnInit() {
+  //   this.usuarios = await this.sqliteService.getAllUsers(); // Carga los usuarios desde SQLite
+  // }
 
-  onUserChange(event: any) {
-    // Asigna automáticamente la contraseña del usuario seleccionado
-    this.contrasena = event.detail.value.password || '';
-  }
+  // onUserChange(event: any) {
+  //   // Asigna automáticamente la contraseña del usuario seleccionado
+  //   this.contrasena = event.detail.value.password || '';
+  // }
 
   async iniciarSesion() {
     this.mensajeError = '';
     // llama al método login en SqliteService para verificar el usuario
     // se reemplaza el metodo autenticacion
     // console.log("user:",this.usuario," pass:",this.contrasena);
-    if (this.usuarioSeleccionado && this.contrasena) {
-      const esValido = await this.sqliteService.login(this.usuarioSeleccionado.username, this.contrasena);
+    if (this.usuario && this.contrasena) {
+      const esValido = await this.sqliteService.login(this.usuario, this.contrasena);
 
       if (esValido) {
-        this.router.navigate(['/home']);
-      } else {
-        const alert = await this.alertController.create({
-          header: '¡Ouch!',
-          message: 'Contraseña incorrecta. Inténtalo de nuevo.',
-          buttons: ['Reintentar']
-        });
-        await alert.present();
+        //uso de state
+        const navigationExtras: NavigationExtras = {
+          state: {
+            user: this.usuario 
+          }
+        };
+      await Storage.set({ key: 'user', value: JSON.stringify(this.usuario) });
+      this.router.navigate(['/tabs/home'], navigationExtras);
+    } else {
+      const alert = await this.alertController.create({
+        header: '¡Ouch!',
+        message: 'Contraseña incorrecta. Inténtalo de nuevo.',
+        buttons: ['Reintentar']
+      });
+      await alert.present();
       }
     }
-  }
-  
+  }  
 
   togglePasswordVisibility() {
     this.mostrarContrasena = !this.mostrarContrasena;

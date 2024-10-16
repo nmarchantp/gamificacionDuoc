@@ -12,6 +12,7 @@ export class RegistroPage {
   username = '';
   email = '';
   password = '';
+  foto = '';
   mensajeError = '';
 
   constructor(
@@ -21,7 +22,7 @@ export class RegistroPage {
   ) {}
 
   async registro() {
-    const isRegistered = await this.sqliteService.registerUser(this.username, this.email, this.password);
+    const isRegistered = await this.sqliteService.registerUser(this.username, this.email, this.password, this.foto);
     if (isRegistered) {
       const alert = await this.alertController.create({
         header: 'Registro Exitoso',
@@ -29,13 +30,23 @@ export class RegistroPage {
         buttons: ['OK']
       });
       await alert.present();
-      this.router.navigate(['/login']); // Redirige al login tras el registro
+      this.router.navigate(['/login']); 
     } else {
       this.mensajeError = 'Hubo un error al registrar el usuario. Inténtalo de nuevo.';
     }
   }
 
   volverALogin() {
-    this.router.navigate(['/login']); // Redirige a la página de inicio de sesión
+    this.router.navigate(['/login']); 
   }
+
+  subirFoto(event: any){
+    const archivo = event.target.files[0];
+    const leer = new FileReader();
+    leer.onload =() => {
+      this.foto = leer.result as string;
+    };
+    leer.readAsDataURL(archivo);
+  }
+
 }
