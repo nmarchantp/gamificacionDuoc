@@ -24,12 +24,26 @@
       <ion-input type="password" [(ngModel)]="password" name="password" required></ion-input>
     </ion-item>
 
-    <!-- carga foto -->
 
-    <ion-item>
-      <ion-label position="floating"></ion-label>
-      <input type="file" (change)="subirFoto($event)" accept="image/*">
-    </ion-item>
+    <!-- nombre -->
+     <ion-item>
+      <ion-label position="floating">Nombre</ion-label>
+      <ion-input type="text" [(ngModel)] = 'nombre' name="nombre" required></ion-input>
+     </ion-item>
+    
+    <!-- apellido -->
+     <ion-item>
+      <ion-label position="floating">Apellido</ion-label>
+      <ion-input type="text" [(ngModel)] = 'apellido' name="apellido" required></ion-input>
+     </ion-item>
+
+     <!-- rol -->
+      <ion-item>
+        <ion-label position="floating">Rol</ion-label>
+        <ion-select [(ngModel)]="rol" name="rol" required>
+          <ion-select-option *ngFor="let rol of roles" [value]="rol.id_rol">{{rol.nombre_rol}}</ion-select-option>
+        </ion-select>
+      </ion-item>
 
     <!-- botón de Registro -->
     <ion-button expand="full" type="submit" color="primary" class="ion-margin-top">

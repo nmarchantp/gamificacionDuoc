@@ -12,7 +12,12 @@ export class RegistroPage {
   username = '';
   email = '';
   password = '';
-  foto = '';
+  nombre = '';
+  apellido = '';
+  roles: any[] = [];
+  rol = 0;
+  telefono = '';
+  fechaNacimiento = '';
   mensajeError = '';
 
   constructor(
@@ -21,8 +26,26 @@ export class RegistroPage {
     private alertController: AlertController
   ) {}
 
+  ngOnInit(){
+    this.cargaRoles();
+  }
+
+  async cargaRoles(){
+    try{
+      this.roles = await this.sqliteService.getRoles();
+      console.log('Roles cargados: ',this.roles);
+    }catch(error){
+      console.error(error); 
+    }
+  }
+
   async registro() {
-    const isRegistered = await this.sqliteService.registerUser(this.username, this.email, this.password, this.foto);
+    if (!this.username || !this.email || !this.password || !this.nombre || !this.apellido || !this.rol) {
+      this.mensajeError = 'Por favor completa todos los campos.';
+      return;
+    }
+  
+    const isRegistered = await this.sqliteService.registerUser(this.username, this.email, this.password, this.nombre, this.apellido, this.rol);
     if (isRegistered) {
       const alert = await this.alertController.create({
         header: 'Registro Exitoso',
@@ -35,18 +58,21 @@ export class RegistroPage {
       this.mensajeError = 'Hubo un error al registrar el usuario. Inténtalo de nuevo.';
     }
   }
+  
+
+
 
   volverALogin() {
     this.router.navigate(['/login']); 
   }
 
-  subirFoto(event: any){
-    const archivo = event.target.files[0];
-    const leer = new FileReader();
-    leer.onload =() => {
-      this.foto = leer.result as string;
-    };
-    leer.readAsDataURL(archivo);
-  }
+  // subirFoto(event: any){
+  //   const archivo = event.target.files[0];
+  //   const leer = new FileReader();
+  //   leer.onload =() => {
+  //     this.foto = leer.result as string;
+  //   };
+  //   leer.readAsDataURL(archivo);
+  // }
 
 }

@@ -19,10 +19,16 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+  <!-- carga copmponente jeep-sqlite para web -->
+  <script type="module" src="https://unpkg.com/jeep-sqlite@latest/dist/jeep-sqlite/jeep-sqlite.esm.js"></script>
+  <script nomodule src="https://unpkg.com/jeep-sqlite@latest/dist/jeep-sqlite/jeep-sqlite.js"></script>
+  
 </head>
 
 <body class="mat-typography">
   <app-root></app-root>
+  <jeep-sqlite></jeep-sqlite>
 </body>
 
 </html>

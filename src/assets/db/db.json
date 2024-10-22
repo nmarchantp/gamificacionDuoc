@@ -1,51 +1,75 @@
 {
-    "database": "gamificationDB",
-    "version": 1,
-    "encrypted": false,
-    "mode": "full",
-    "tables": [
-      {
-        "name": "Usuarios",
-        "schema": [
-          { "column": "id_user", "value": "INTEGER PRIMARY KEY AUTOINCREMENT" },
-          { "column": "username", "value": "TEXT NOT NULL" },
-          { "column": "email", "value": "TEXT UNIQUE NOT NULL" },
-          { "column": "password", "value": "TEXT NOT NULL" },
-          { "column": "nivel", "value": "INTEGER DEFAULT 1" },
-          { "column": "puntos_totales", "value": "INTEGER DEFAULT 0" }
-        ],
-        "values": [
-          [1, "usuario1", "usuario1@example.com", "1234", 1, 0],
-          [2, "usuario2", "usuario2@example.com", "5678", 2, 100]
-        ]
-      },
-      {
-        "name": "Desafios",
-        "schema": [
-          { "column": "id_desafio", "value": "INTEGER PRIMARY KEY AUTOINCREMENT" },
-          { "column": "nombre_desafio", "value": "TEXT NOT NULL" },
-          { "column": "descripcion", "value": "TEXT" },
-          { "column": "puntos", "value": "INTEGER NOT NULL" }
-        ],
-        "values": [
-          [1, "Primer desafío", "Completa el primer desafío", 10],
-          [2, "Segundo desafío", "Completa el segundo desafío", 20]
-        ]
-      },
-      {
-        "name": "HistorialDesafios",
-        "schema": [
-          { "column": "id_desafio_h", "value": "INTEGER PRIMARY KEY AUTOINCREMENT" },
-          { "column": "id_user", "value": "INTEGER" },
-          { "column": "id_desafio", "value": "INTEGER" },
-          { "column": "fecha_completado", "value": "DATETIME DEFAULT CURRENT_TIMESTAMP" },
-          { "column": "puntos_ganados", "value": "INTEGER" }
-        ],
-        "values": [
-          [1, 1, 1, "2024-01-01 12:00:00", 10],
-          [2, 2, 2, "2024-01-02 15:30:00", 20]
-        ]
-      }
-    ]
-  }
-  
+  "database": "gamificationDB",
+  "version": 1,
+  "encrypted": false,
+  "mode": "full",
+  "tables": [
+    {
+      "name": "Roles",
+      "schema": [
+        { "column": "id_rol", "value": "INTEGER PRIMARY KEY AUTOINCREMENT" },
+        { "column": "nombre_rol", "value": "TEXT NOT NULL UNIQUE" },
+        { "column": "estado_rol", "value": "TEXT NOT NULL" }
+      ],
+      "values": [
+        [1, "Usuario", "Activo"]
+      ]
+    },
+    {
+      "name": "Desafios",
+      "schema": [
+        { "column": "id_desafio", "value": "INTEGER PRIMARY KEY AUTOINCREMENT" },
+        { "column": "nombre_desafio", "value": "TEXT NOT NULL" },
+        { "column": "descripcion", "value": "TEXT" },
+        { "column": "puntos", "value": "INTEGER NOT NULL" }
+      ],
+      "values": [
+        [1, "Primer desafío", "Completa el primer desafío", 10],
+        [2, "Segundo desafío", "Completa el segundo desafío", 20]
+      ]
+    },
+    {
+      "name": "Usuarios",
+      "schema": [
+        { "column": "id_user", "value": "INTEGER PRIMARY KEY AUTOINCREMENT" },
+        { "column": "username", "value": "TEXT NOT NULL UNIQUE" },
+        { "column": "email", "value": "TEXT NOT NULL UNIQUE" },
+        { "column": "password", "value": "TEXT NOT NULL" },
+        { "column": "nombre", "value": "TEXT NOT NULL" },
+        { "column": "apellido", "value": "TEXT NOT NULL" },
+        { "column": "id_rol", "value": "INTEGER NOT NULL" }
+      ],
+      "values": [
+        [1, "usuario1", "usuario1@example.com", "1234", "John", "Doe", 1],
+        [2, "usuario2", "usuario2@example.com", "5678", "Jane", "Doe", 1]
+      ]
+    },
+    {
+      "name": "Niveles",
+      "schema": [
+        { "column": "id_nivel", "value": "INTEGER PRIMARY KEY AUTOINCREMENT" },
+        { "column": "id_user", "value": "INTEGER NOT NULL" },
+        { "column": "nivel", "value": "INTEGER DEFAULT 1" },
+        { "column": "puntos_totales", "value": "INTEGER DEFAULT 0" }
+      ],
+      "values": [
+        [1, 1, 1, 0],
+        [2, 2, 2, 100]
+      ]
+    },
+    {
+      "name": "HistorialDesafios",
+      "schema": [
+        { "column": "id_desafio_h", "value": "INTEGER PRIMARY KEY AUTOINCREMENT" },
+        { "column": "id_user", "value": "INTEGER" },
+        { "column": "id_desafio", "value": "INTEGER" },
+        { "column": "fecha_completado", "value": "DATETIME DEFAULT CURRENT_TIMESTAMP" },
+        { "column": "puntos_ganados", "value": "INTEGER" }
+      ],
+      "values": [
+        [1, 1, 1, "2024-01-01 12:00:00", 10],
+        [2, 2, 2, "2024-01-02 15:30:00", 20]
+      ]
+    }
+  ]
+}

@@ -37,14 +37,6 @@ const routes: Routes = [
     loadChildren: () => import('./registro/registro.module').then( m => m.RegistroPageModule)
   },
   {
-    path: 'prueba-api',
-    loadChildren: () => import('./prueba-api/prueba-api.module').then( m => m.PruebaApiPageModule)
-  },
-  {
-    path: 'prueba-api',
-    loadChildren: () => import('./prueba-api/prueba-api.module').then( m => m.PruebaApiPageModule)
-  },
-  {
     path: 'notfound',
     loadChildren: () => import('./notfound/notfound.module').then( m => m.NotFoundPageModule)
   },

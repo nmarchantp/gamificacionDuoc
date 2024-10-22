@@ -1,6 +1,6 @@
 <ion-header class="ion-no-border">
   <ion-toolbar color="primary">
-    <ion-title>¡Bienvenido, {{ nombreUsuario }}!</ion-title>
+    <ion-title>¡Bienvenido, {{ nombreAvatar }}!</ion-title>
     <ion-buttons slot="end"></ion-buttons>
       <ion-buttons slot="end">
         <!-- Reemplaza el ion-button por el botón de Angular Material con menú -->
@@ -24,9 +24,7 @@
   <ion-card color="primary" class="bienvenida-card">
     <ion-card-header>
       <ion-item lines="none" color="primary">
-        <ion-avatar>
-          <img [src]="fotoUsuario" alt="Foto del Usuario">
-        </ion-avatar>
+        <app-avatar></app-avatar>
         <ion-label>
           <ion-card-title>{{ nombreUsuario }}</ion-card-title>
           <ion-text>

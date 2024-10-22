@@ -11,9 +11,9 @@ import { DesafiosService } from '../services/desafios.service';
 })
 export class HomePage implements OnInit {
   nombreUsuario: string = '';
+  nombreAvatar: string  = '';
   nivelUsuario: number = 0;
   puntosUsuario: number = 0;
-  fotoUsuario: string = '';
   primerosDesafios: any[] = [];
 
   // constructor(private autenticacionService: AutenticacionService, private router: Router, private desafiosService: DesafiosService) {}
@@ -28,7 +28,8 @@ export class HomePage implements OnInit {
     // const usuario = this.autenticacionService.obtenerUsuarioAutenticado();
     await this.actualizarUsuario();
     this.primerosDesafios = this.desafiosService.obtenerDesafios().slice(0, 3);
-    
+    //this.nombreAvatar = await this.obtenerNombreAvatar();
+    console.log('Nombre Avatar desde HomePage:', this.nombreAvatar);
   }
 
   cerrarSesion() {
@@ -45,7 +46,8 @@ export class HomePage implements OnInit {
       this.nombreUsuario = usuario.username;
       this.nivelUsuario = usuario.nivel;
       this.puntosUsuario = usuario.puntos_totales;
-      this.fotoUsuario = usuario.foto;
+      this.nombreAvatar = usuario.nombre+" "+usuario.apellido;
     }
   }
+  
 }
