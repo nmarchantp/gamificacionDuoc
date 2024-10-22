@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { SqliteService } from '../services/sqlite.service';
 import { NavigationExtras, Router } from '@angular/router';
 import { AlertController } from '@ionic/angular';
-import { Storage } from '@capacitor/storage';
+import { Preferences } from '@capacitor/preferences';
 
 
 @Component({
@@ -48,7 +48,7 @@ export class LoginPage {
             user: this.usuario 
           }
         };
-      await Storage.set({ key: 'user', value: JSON.stringify(this.usuario) });
+      await Preferences.set({ key: 'user', value: JSON.stringify(this.usuario) });
       this.router.navigate(['/tabs/home'], navigationExtras);
     } else {
       const alert = await this.alertController.create({

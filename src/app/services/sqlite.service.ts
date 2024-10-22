@@ -6,7 +6,6 @@ import { Capacitor } from '@capacitor/core';
 import { Device } from '@capacitor/device';
 import { Preferences } from '@capacitor/preferences';
 import { BehaviorSubject, catchError, Observable, of, retry } from 'rxjs';
-import { Storage  } from '@capacitor/storage';
 import { __awaiter } from 'tslib';
 
 
@@ -419,7 +418,7 @@ export class SqliteService {
         console.log("Current user", userData);
 
         //guardo los datos localmente (localstorage)
-        await Storage.set({
+        await Preferences.set({
           key: 'currentUser',
           value:JSON.stringify(userData)
         });
@@ -452,89 +451,11 @@ export class SqliteService {
     }
   }
   
-  
-  //conecta a la api de usuarios y trae 5 al azar
-  //los guarda en la base de datos, esto simula a tener  una base de datos con usuarios
-  //el problema es que como son al azar, debo mostrarlos en alguna parte para usarlos
-  //los mostraré con console y le preguntare al profe si sirve
-  // async traerUsuariosApi() {
-  //   try {
-  //     const apiUrl = 'https://randomuser.me/api/?results=5';
-    
-  //   // Realiza la solicitud HTTP con retry en caso de fallo
-  //     const apiResult: any = await this.http.get(apiUrl).pipe(
-  //       retry(3), // ntenta 3 veces en caso de error
-  //       catchError(error => {
-  //       console.error("Error en la solicitud de API después de reintentar:", error);
-  //       return of(null); 
-  //     })
-  //   ).toPromise();
-  
-  //     if (apiResult && apiResult.results && Array.isArray(apiResult.results)) {
-  //       for (let user of apiResult.results) {
-  //         const username = user.login.username;
-  //         const password = user.login.password;
-  //         const email = user.email;
-  //         const foto = user.picture.large;
-          
-  //         //inserto en la tabla Usuarios
-  //         const insertUserQuery = `
-  //           INSERT INTO Usuarios (username, email, password, foto)
-  //           VALUES (?, ?, ?, ?);
-  //         `;
-  //         const insertUserResult = await CapacitorSQLite.run({
-  //           database: this.dbName,
-  //           statement: insertUserQuery,
-  //           values: [username, email, password, foto]
-  //         });
-  
-  //         // Obtiene el ID del usuario insertado
-  //         const id_user = insertUserResult.changes.lastId;
-  
-  //         // inserto en la tabla niveles los campos relacionados al id_user
-  //         const insertNivelQuery = `
-  //           INSERT INTO Niveles (id_user, nivel, puntos_totales)
-  //           VALUES (?, ?, ?);
-  //         `;
-  //         await CapacitorSQLite.run({
-  //           database: this.dbName,
-  //           statement: insertNivelQuery,
-  //           values: [id_user, 1, 0] 
-  //         });
-  //         console.log(`Usuario ${username} y su nivel inicial han sido guardados en la base de datos.`);
-  //         //guardo el susuario en localstorage
-  //         //esto no lo debería hacer por temas de seguridad
-  //         // const userData = { username, email, password, foto, nivel: 1, puntos_totales: 0 };
-  //         // await Storage.set({
-  //         // key: `user_${id_user}`,
-  //         // value: JSON.stringify(userData)
-  //         // });  
-  //         // console.log(`Usuario ${username} y su nivel inicial han sido guardados en localstorage.`);
-  //       }
-  //     } else {
-  //       console.error("La respuesta de la API no contiene usuarios válidos");
-  //     }
-  //   } catch (error) {
-  //     console.error("Error al obtener y guardar los usuarios de la API:", error);
-  //   }
-  // }
-  
-
-
-  //metodo para verificar si el susuario esta en local storage antes de consultar la bd
-  //esto no me sirve por que no se pueden guardar usuarios en local storage
-  // async getUsuarioLocalStorage(): Promise<any> {
-  //   const { value } = await Storage.get({ key: 'currentUser' });
-  //   return value ? JSON.parse(value) : null;
-  // }
-
-
-
 
   
   //metodo para borar el local storage
   async borrarLocalStorage(){
-    await Storage.clear();
+    await Preferences.clear();
     console.log('Se ha limpiado localstorage completamente');
   } 
   
