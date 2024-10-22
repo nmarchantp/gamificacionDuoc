@@ -32,15 +32,20 @@ const routes: Routes = [
     loadChildren: () =>
       import('./resetpass/resetpass.module').then((m) => m.ResetpassPageModule)
   },
- // {
-//Esto es para pagina de redirigir un error 404 (recordar crear una pagina para error con un gatito)
- //   path: '**',
- //   component: MiComponente404
- // },
-  //para page
-// {
-//   path: '**',
-// loadchildren:() => import('./page-not-found/page-not-found.module').then(m.PageNotFoundModule)
+  {
+    path: 'registro',
+    loadChildren: () => import('./registro/registro.module').then( m => m.RegistroPageModule)
+  },
+  {
+    path: 'notfound',
+    loadChildren: () => import('./notfound/notfound.module').then( m => m.NotFoundPageModule)
+  },
+  {
+    path: '**', 
+    redirectTo: 'notfound' 
+  }
+
+
   
 ];
 

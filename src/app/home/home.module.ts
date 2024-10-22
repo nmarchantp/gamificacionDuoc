@@ -8,6 +8,7 @@ import {MatMenuModule} from '@angular/material/menu';
 import {MatButtonModule} from '@angular/material/button';
 
 import { HomePageRoutingModule } from './home-routing.module';
+import { AvatarComponent } from '../avatar/avatar.component';
 
 
 @NgModule({
@@ -20,6 +21,6 @@ import { HomePageRoutingModule } from './home-routing.module';
     MatMenuModule, 
     MatIconModule
   ],
-  declarations: [HomePage]
+  declarations: [HomePage, AvatarComponent]
 })
 export class HomePageModule {}
