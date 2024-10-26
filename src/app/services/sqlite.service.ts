@@ -70,8 +70,8 @@ export class SqliteService {
     try {
       await Preferences.remove({ key: 'first_setup_key' });
       const info = await Device.getInfo();
-      this.isWeb = info.platform === 'web';
-  
+
+      this.isWeb = info.platform === 'web';  
       if (this.isWeb) {
         const jeepSqliteEl = document.createElement('jeep-sqlite');
         document.body.appendChild(jeepSqliteEl);
@@ -384,8 +384,6 @@ export class SqliteService {
         throw error;
       }
     }
-    
-    
   
   async getCurrentUser() {
     if (!this.currentUser) return null;
@@ -450,8 +448,6 @@ export class SqliteService {
       return null;
     }
   }
-  
-
   
   //metodo para borar el local storage
   async borrarLocalStorage(){

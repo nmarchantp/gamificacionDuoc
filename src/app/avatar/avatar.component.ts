@@ -16,7 +16,7 @@ export class AvatarComponent implements OnInit {
 
   async ngOnInit() {
     try {
-      
+      this.nombreUsuario = '';
       this.nombreUsuario = await this.userService.traerNombreUsuario();
       console.log('El nombre rescatado es:', this.nombreUsuario);
       this.avatarUrl = this.avatarApiService.traerAvatar(this.nombreUsuario);

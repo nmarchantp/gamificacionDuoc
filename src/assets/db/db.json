@@ -40,8 +40,8 @@
         { "column": "id_rol", "value": "INTEGER NOT NULL" }
       ],
       "values": [
-        [1, "usuario1", "usuario1@example.com", "1234", "John", "Doe", 1],
-        [2, "usuario2", "usuario2@example.com", "5678", "Jane", "Doe", 1]
+        [1, "usuario1", "usuario1@example.com", "1234", "Nicole", "Marchant", 1],
+        [2, "usuario2", "usuario2@example.com", "5678", "Josyan", "Bonnemaison", 1]
       ]
     },
     {

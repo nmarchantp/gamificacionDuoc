@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { SqliteService } from '../services/sqlite.service';
 import { Router } from '@angular/router'; 
 import { DesafiosService } from '../services/desafios.service';
+import { AvatarApiService } from '../services/avatar-api.service';
 
 @Component({
   selector: 'app-home',
@@ -15,12 +16,14 @@ export class HomePage implements OnInit {
   nivelUsuario: number = 0;
   puntosUsuario: number = 0;
   primerosDesafios: any[] = [];
+  avatarNombre: string = '';
 
   // constructor(private autenticacionService: AutenticacionService, private router: Router, private desafiosService: DesafiosService) {}
   constructor(
     private sqliteService: SqliteService, 
     private router: Router, 
-    private desafiosService: DesafiosService
+    private desafiosService: DesafiosService,
+    private avatarApiService: AvatarApiService
   ) {}
 
   async ngOnInit() {
@@ -29,6 +32,8 @@ export class HomePage implements OnInit {
     await this.actualizarUsuario();
     this.primerosDesafios = this.desafiosService.obtenerDesafios().slice(0, 3);
     //this.nombreAvatar = await this.obtenerNombreAvatar();
+    this.nombreUsuario = await this.sqliteService.traerNombreUsuario();
+    this.avatarNombre = this.avatarApiService.traerAvatar(this.nombreUsuario);
     console.log('Nombre Avatar desde HomePage:', this.nombreAvatar);
   }
 
