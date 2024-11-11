@@ -1,76 +1,100 @@
 <ion-header class="ion-no-border">
-  <ion-toolbar color="primary">
-    <ion-title>¡Bienvenido, {{ nombreAvatar }}!</ion-title>
+  <ion-toolbar color="primary" class="custom-toolbar">
+    <div class="bienvenida-contenedor"><app-avatar class="avatar-custom"></app-avatar><ion-title
+        class="bienvenida-user">¡Hola {{ nombreAvatar }}!</ion-title> </div>
     <ion-buttons slot="end"></ion-buttons>
-      <ion-buttons slot="end">
-        <!-- Reemplaza el ion-button por el botón de Angular Material con menú -->
-        <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Menu">
-          <mat-icon color="white">more_vert</mat-icon>
+    <ion-buttons slot="end">
+      <!-- Reemplaza el ion-button por el botón de Angular Material con menú -->
+      <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Menu">
+        <mat-icon color="white" class="custom-cerrarsesion">more_vert</mat-icon>
+      </button>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item (click)="cerrarSesion()">
+          <mat-icon>logout</mat-icon>
+          <span>Cerrar Sesión</span>
         </button>
-        <mat-menu #menu="matMenu">
-          <button mat-menu-item (click)="cerrarSesion()">
-            <mat-icon>logout</mat-icon>
-            <span>Cerrar Sesión</span>
-          </button>
-        </mat-menu>
-      </ion-buttons>
-    </ion-toolbar>
-  </ion-header>
+      </mat-menu>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
 
 <div class="shapedividers_com-4940"></div>
 
 <ion-content [fullscreen]="true" class="ion-padding" color="background">
-  <!-- Bienvenida al usuario -->
-  <ion-card color="primary" class="bienvenida-card">
+  <!-- card de perfil usuario-->
+  <ion-card color="primary" class="profile-card">
     <ion-card-header>
-      <ion-item lines="none" color="primary">
-        <app-avatar></app-avatar>
-        <ion-label>
-          <ion-card-title>{{ nombreUsuario }}</ion-card-title>
-          <ion-text>
-            <ion-text class="info-text">Tu Nivel: {{ nivelUsuario }}</ion-text>
-            <ion-text class="info-text">Tienes {{ puntosUsuario }} puntos acumulados.</ion-text>
-          </ion-text>
-        </ion-label>
-      </ion-item>
+      <div class="user-info">
+        <img [src]="selectedAvatar" alt="Avatar del usuario" class="avatar-img" (click)="openAvatarSelection()" />
+        <ion-card-title class="user-name">{{ nombreUsuario }}</ion-card-title>
+        
+        <button class="action-button"><ion-icon name="create-outline"></ion-icon></button>
+      </div>
+      
     </ion-card-header>
-  </ion-card>
-
-  <!-- Sección de Desafíos -->
-  <ion-card color="secondary">
-    <ion-card-header>
-      <ion-card-title>Lista de desafíos</ion-card-title>
-    </ion-card-header>
+  
     <ion-card-content>
-      <ion-list>
-        <ion-item *ngFor="let desafio of primerosDesafios">
-          <ion-label>
-            <ion-text class="desafio-descripcion">{{ desafio.descripcion }}</ion-text>
-            <ion-text class="desafio-puntos">Puntos: {{ desafio.puntos }}</ion-text>
-          </ion-label>
-        </ion-item>
-      </ion-list>
-      <ion-button expand="full" color="primary" routerLink="/tabs/desafios">Ver Todos los Desafíos</ion-button>
+      <div class="bars-container">
+        <!-- Barra de nivel (LVL) -->
+        <div class="bar-row">
+          <ion-label class="bar-title1"><ion-icon name="heart"></ion-icon></ion-label>
+          <div class="bar">
+            <div class="bar-progress1" [style.width.%]="nivelPorcentaje"></div>
+          </div>
+          <ion-label class="bar-value">{{ nivelUsuario }}</ion-label>
+        </div>
+  
+        <!-- Barra de experiencia (XP) -->
+        <div class="bar-row">
+          <ion-label class="bar-title2"><ion-icon name="school"></ion-icon></ion-label>
+          <div class="bar">
+            <div class="bar-progress2" [style.width.%]="puntosPorcentaje"></div>
+          </div>
+          <ion-label class="bar-value">{{ puntosUsuario }}</ion-label>
+        </div>
+      </div>
+      
     </ion-card-content>
   </ion-card>
 
-  <!-- Sección de Premios -->
-  <ion-card color="secondary">
-    <ion-card-header>
-      <ion-card-title>Premios Disponibles</ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-      <ion-button expand="full" color="primary" routerLink="/premios">Ver Premios</ion-button>
-    </ion-card-content>
-  </ion-card>
 
-  <!-- Sección de Ranking -->
-  <ion-card color="secondary">
-    <ion-card-header>
-      <ion-card-title>Ranking de Usuarios</ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-      <ion-button expand="full" color="primary" routerLink="/ranking">Ver Ranking</ion-button>
-    </ion-card-content>
-  </ion-card>
+  
+
+    <!-- Sección de Desafíos -->
+    <ion-card color="secondary">
+      <ion-card-header>
+        <ion-card-title>Lista de desafíos</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-list>
+          <ion-item *ngFor="let desafio of primerosDesafios">
+            <ion-label>
+              <ion-text class="desafio-descripcion">{{ desafio.descripcion }}</ion-text>
+              <ion-text class="desafio-puntos">Puntos: {{ desafio.puntos }}</ion-text>
+            </ion-label>
+          </ion-item>
+        </ion-list>
+        <ion-button expand="full" color="primary" routerLink="/tabs/desafios">Ver Todos los Desafíos</ion-button>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Sección de Premios -->
+    <ion-card color="secondary">
+      <ion-card-header>
+        <ion-card-title>Premios Disponibles</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-button expand="full" color="primary" routerLink="/premios">Ver Premios</ion-button>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Sección de Ranking -->
+    <ion-card color="secondary">
+      <ion-card-header>
+        <ion-card-title>Ranking de Usuarios</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-button expand="full" color="primary" routerLink="/ranking">Ver Ranking</ion-button>
+      </ion-card-content>
+    </ion-card>
 </ion-content>

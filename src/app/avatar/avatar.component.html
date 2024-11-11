@@ -1,2 +1,7 @@
 
-<img [src]="avatarUrl" alt="Avatar del usuario" class="avatar-img"/>
+<img
+  [src]="avatarUrl"
+  alt="Avatar del usuario"
+  class="avatar-img"
+  (error)="onAvatarError()"
+/>

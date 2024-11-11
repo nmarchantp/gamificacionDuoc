@@ -1,0 +1,29 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="primary" class="custom-toolbar">
+    <div class="bienvenida-contenedor">
+      <ion-title class="bienvenida-user">Elige tu avatar</ion-title>
+    </div>
+    <ion-buttons slot="end">
+      <ion-button (click)="closeModal()">Cerrar</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<div class="shapedividers_com-4940"></div>
+
+<ion-content class="ion-padding">
+  <!-- Filtro de categorías -->
+  <div class="category-filter">
+    <ion-segment [(ngModel)]="selectedCategory" (ionChange)="filterAvatars()">
+      <ion-segment-button value="all">Todos</ion-segment-button>
+      <ion-segment-button value="male">Hombre</ion-segment-button>
+      <ion-segment-button value="female">Mujer</ion-segment-button>
+      <ion-segment-button value="other">Otro</ion-segment-button>
+    </ion-segment>
+  </div>
+
+  <!-- Grid de avatares filtrados -->
+  <div class="avatar-grid">
+    <img *ngFor="let avatar of filteredAvatars" [src]="avatar.url" (click)="selectAvatar(avatar.url)" class="avatar-option">
+  </div>
+</ion-content>

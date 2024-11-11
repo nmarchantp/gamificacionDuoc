@@ -33,31 +33,27 @@
       <ion-label position="floating">
         <ion-icon name="lock-closed" color="secondary" class="icon-size"></ion-icon>
       </ion-label>
-      <ion-label position="floating"></ion-label>
-      <ion-input 
-        type="password"
-        [(ngModel)]="contrasena" 
-        name="password"
-        required>
+      <!-- ngModel debe llamarse contrasena para que no pierda la funcionalidad del ojo que oculta/muestra la contraseña -->
+      <ion-input [(ngModel)]="contrasena" [type]="mostrarContrasena ? 'text' : 'password'" name="contrasena" required
+      color="primary">
       </ion-input>
       <!-- icono  de ojito ayudante -->
       <ion-icon [name]="mostrarContrasena ? 'eye-off' : 'eye'" slot="end" (click)="togglePasswordVisibility()"
         class="icon-eye"></ion-icon>
     </ion-item>
+      <!--LINK DE RECUPERACION DE CONTRASEÑA-->
+      <ion-text color="medium" class="respass">
+        <ion-button fill="clear" (click)="irARecuperarContrasena()" class="recupera"><ion-icon name="caret-forward-outline"></ion-icon>¿Olvidaste tu contraseña?</ion-button>
+      </ion-text>
 
     <!--BOTON DE INGRESO-->
     <ion-list class="btn-login">
       <ion-button expand="default" type="submit" class="boton-ingresar" (click)="iniciarSesion()">INGRESAR</ion-button>
     </ion-list>
 
-    <!--LINK DE RECUPERACION DE CONTRASEÑA-->
-    <ion-text color="medium" class="respass">
-      <ion-button fill="clear" (click)="irARecuperarContrasena()">¿Olvidaste tu contraseña?</ion-button>
-    </ion-text>
-
     <!--BOTÓN DE REGISTRO-->
     <ion-text color="medium" class="register">
-      <ion-button fill="clear" (click)="irARegistro()">¿No tienes cuenta? Regístrate</ion-button>
+      <ion-button fill="clear" (click)="irARegistro()">¿No tienes cuenta? <span>Regístrate</span>   <ion-icon name="checkmark-circle"></ion-icon></ion-button>
     </ion-text>
 
     <!--VALIDACION DE INGRESO (MENSAJE DE ERROR)-->

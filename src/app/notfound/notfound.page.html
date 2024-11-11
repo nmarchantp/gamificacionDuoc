@@ -1,13 +1,29 @@
-<ion-header>
+<ion-header class="ion-no-border">
   <ion-toolbar color="primary">
-    <ion-title>Página No Encontrada</ion-title>
-  </ion-toolbar>
-</ion-header>
+    <ion-title>Página no encontrada</ion-title>
+    </ion-toolbar>
+  </ion-header>
 
-<ion-content class="ion-padding">
-  <div class="content">
-    <h1>404</h1>
-    <p>Lo sentimos, la página que estás buscando no existe.</p>
-    <ion-button expand="full" color="primary" (click)="goHome()">Regresar al Inicio</ion-button>
-  </div>
+<div class="shapedividers_com-4940"></div>
+
+<ion-content [fullscreen]="true" class="ion-padding custom-background">
+      <ion-grid>
+        <ion-row class="ion-justify-content-center ion-align-items-center error-gato">
+          <ion-img src="assets/images/error_404.png" alt=""></ion-img>
+        </ion-row>
+      </ion-grid>
+      <ion-row class="ion-justify-content-center">
+        <ion-text class="text-amarillo">OOPS!</ion-text>
+        <ion-text class="text-azul">Algo salió mal</ion-text>
+      </ion-row>
+      <ion-row class="ion-justify-content-center">
+        <ion-text class="text-azul">La página que buscas no existe</ion-text> 
+      </ion-row>
+       <!--BOTON DE INGRESO-->
+    <ion-list class="btn-volver">
+      <ion-button expand="default" class="btn-regresar" color="primary" (click)="goHome()">Regresar al Inicio</ion-button>
+      
+      
+    </ion-list>
+    
 </ion-content>
