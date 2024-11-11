@@ -88,7 +88,7 @@
 
 .boton-ingresar {
   margin-top: 20px; 
-  border-radius: 50px;
+  border-radius: 10px !important;
   font-size: 16px; 
   text-transform: uppercase; 
   box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
@@ -102,20 +102,43 @@
 .btn-login {
   display: flex;
   justify-content: center; 
-  margin-top: 20px;
+  margin-top: 10px;
 }
 
 // FIN
 
 // LINK OLVIDO CONTRASEÑA
-.respass{
-  display: flex;
-  justify-content: center; 
-  align-items: center;   
-  padding: 5px 0;
-
- 
+// Ajustar el estilo de los botones de texto de recuperación y registro
+.respass ion-button,
+.register ion-button {
+  font-size: 15px !important; // Tamaño de letra más pequeño
+  text-transform: none !important; // Evita que se transforme a mayúsculas automáticamente
+  color: #002649 !important; // Ajusta el color según tu preferencia
+  padding: 10px 0 0 0 !important; // Elimina el padding adicional
 }
+
+
+// Ajustar el espacio entre los elementos
+.respass {
+  display: flex;
+  justify-content:flex-start;
+  align-items: center;
+  margin: 5px 0 !important; // Ajusta el espaciado entre elementos
+}
+
+.register {
+  display: flex;
+  justify-content:center;
+  align-items: center;
+  margin: 50px 0 !important; // Ajusta el espaciado entre elementos
+}
+
+.register span{
+  padding: 0 5px;
+  font-weight: 550;
+  
+}
+
 // FIN
 
 .ayuda{
@@ -123,15 +146,13 @@
   align-items: right;
 }
 
-// este es muy importante, desactiva el scroll que viene por defecto en ion content, dejara estatico el login
-
+// este es muy importante, desactiva el scroll que viene por defecto en ion content, dejara estatico el login - no cambiar!!
 ion-content {
-  --offset-bottom: auto!important;
-  --overflow: hidden;
-  overflow: auto;
-  &::-webkit-scrollbar {
-    display: none;
-  }
+  --offset-bottom: auto !important;
+  --overflow: hidden !important;
+  overflow: hidden !important; 
 }
+
+
 
 // FIN
