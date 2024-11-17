@@ -1,12 +1,12 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { NotfoundPage } from './notfound.page';
+import { NotFoundPage } from './notfound.page';
 
 describe('NotfoundPage', () => {
-  let component: NotfoundPage;
-  let fixture: ComponentFixture<NotfoundPage>;
+  let component: NotFoundPage;
+  let fixture: ComponentFixture<NotFoundPage>;
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(NotfoundPage);
+    fixture = TestBed.createComponent(NotFoundPage);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
