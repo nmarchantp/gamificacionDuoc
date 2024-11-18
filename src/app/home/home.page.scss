@@ -29,7 +29,7 @@
 
 .bienvenida-user {
   display: flex;
-  align-items: center; 
+  align-items:center; 
   justify-content: flex-start; 
 }
 
@@ -47,7 +47,7 @@
   width: 100px; 
   height: 100px;
   border-radius: 50%;
-  
+  border: 3px solid #ffffff; 
 }
 
 .custom-cerrarsesion {
@@ -141,20 +141,7 @@ ion-content {
     color: var(--ion-color-medium);
   }
 
-  ion-button {
-    margin-top: 12px;
-    width: 100%;
-    --border-radius: 8px;
-    --box-shadow: none;
-  }
 
-  ion-item {
-    --background: var(--ion-color-secondary);
-    --color: var(--ion-color-secondary-contrast);
-    margin: 5px 0;
-    border-radius: 8px;
-    padding: 10px;
-  }
 
   ion-avatar {
     margin-right: 10px;
@@ -188,9 +175,8 @@ ion-content {
     left: 0;
     right: 0;
     bottom: 0;
-    
     box-shadow: inset 4px 4px 10px rgba(0, 0, 0, 0.4), inset -4px -4px 10px rgba(255, 255, 255, 0.2);
-    border-radius: 15px;
+    border-radius: 10px;
     z-index: -1; // Asegura que esté detrás del contenido
   }
 }
@@ -200,7 +186,7 @@ ion-content {
 .user-info {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content:flex-start;
   gap: 15px;
 }
 
@@ -211,23 +197,40 @@ ion-content {
   cursor: pointer;
 }
 
-.user-name {
-  font-size: 17px !important;
-  font-weight: normal !important;
-  color: #ffffff;
+.nombre-rol{
+  display: flex;
+  flex-direction: column; 
+  align-items:start; 
+  text-align: start; 
 }
 
-.bars-container {
+.user-name {
+  font-size: 19px !important;
+  font-weight: normal !important;
+  color: #ffffff;
+
+}
+
+.rol-user{
+  font-size: 13px;
+  font-weight: 100;
+  
+}
+
+
+.bars-container{
   display: flex;
   flex-direction: column;
   gap: 15px;
-  margin-top: 20px;
+  margin-top: 10px;
+  padding: 10px 0 0 20px;
 }
 
 .bar-row {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 20px;
+  padding-bottom: 10px;
 }
 
 .bar-title1, .bar-title2 {
@@ -262,13 +265,13 @@ ion-content {
   height: 100%;
   background-color: #31eb37; /* Color para la barra de nivel y experiencia */
   border-radius: 5px;
-  width: 90px; /* Espacio reservado para el valor de la barra */
+  width: 50px; /* Espacio reservado para el valor de la barra */
 }
 .bar-progress2 {
   height: 100%;
   background-color: #e6a900; /* Color para la barra de nivel y experiencia */
   border-radius: 5px;
-  width: 90px; /* Espacio reservado para el valor de la barra */
+  width: 50px; /* Espacio reservado para el valor de la barra */
 }
 
 .ion-label{
@@ -279,8 +282,8 @@ ion-content {
   font-size: 12px;
   font-weight: normal;
   color: #ffffff;
-  width: 20px; /* Espacio reservado para el valor de la barra */
-  text-align: right;
+  width: 30px; /* Espacio reservado para el valor de la barra */
+  text-align: left;
   margin-top: 0;
 }
 
@@ -297,4 +300,233 @@ ion-content {
 .action-button ion-icon{
   font-size: 25px;
   font-weight: 500;
+}
+
+.profile-card {
+  margin: 20px auto;
+  width: 90%;
+  border-radius: 15px;
+  background: linear-gradient(75deg, #2a5298, #002649);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.desafio-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: #fff;
+  padding: 16px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  text-align: center;
+}
+
+.desafio-card ion-card-header {
+  background-color: #f9f9f9;
+  border-bottom: 1px solid #ddd;
+  border-radius: 12px 12px 0 0;
+}
+
+.desafio-card ion-card-title {
+  font-size: 1.2em;
+  font-weight: bold;
+  color: #333;
+}
+
+.desafio-card ion-card-content p {
+  font-size: 0.9em;
+  color: #555;
+}
+
+.desafio-card ion-button {
+  margin-top: 12px;
+}
+
+.no-padding {
+  padding: 0; 
+}
+
+.desafios-container {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px; /* Espaciado entre desafíos */
+  padding-bottom: 30px;
+}
+
+.desafio-item {
+  background: #ffffff; 
+  padding: 16px;
+  border-radius: 8px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); 
+  text-align: left;
+}
+
+.desafio-item h3 {
+  font-size: 18px;
+  color: #333;
+}
+
+.desafio-item p {
+  margin: 5px 0;
+  font-size: 13px;
+  color: #555;
+}
+
+.btn-mision {
+  display: flex;
+  justify-content: center; 
+  margin-top: 3px;
+}
+
+
+.btn-detalle-mision{
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  font-size: 13px;
+  display: flex;
+  justify-content: end;
+  align-content: flex-end;
+  margin-top: 3px; 
+  border-radius: 5px !important;
+  text-transform: uppercase; 
+}
+
+
+ion-card-header+.card-content-md {
+  padding-top: 10px 0 0 0;
+}
+
+.desafios-container {
+  width: 100%;
+  height: auto;
+  
+}
+
+.desafio-item {
+  width: 100%;
+  flex-shrink: 0;
+  max-width: 100%;
+  background: #ffffff;
+  border-radius: 12px;
+  text-align: center;
+}
+
+.desafio-item ion-card-header {
+  background-color: #ffffff;
+  border-bottom: 2px solid #e6a900;
+  border-radius: 12px 12px 0 0;
+  padding: 5px 5px 10px 5px;
+}
+
+.desafio-item ion-card-title {
+  font-size: 17px;
+  font-weight:500;
+  color: #002649;
+}
+
+.desafio-item ion-card-content p {
+  margin: 8px 0;
+  font-size: 0.9em;
+  color: #555;
+  text-align: start;
+}
+
+.desafio-item ion-button {
+  margin-top: 12px;
+}
+
+
+.card-content-ios {
+  padding: 20px 10px 0 10px;
+}
+
+.revisar-mision{
+  display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-content: center;
+    justify-content: center;
+}
+
+//titulo de las secciones
+
+.titulo-seccion {
+  text-align: left; 
+  padding: 10px 10px 10px 40px; 
+}
+
+.titulo-juego {
+  display: flex;
+  align-items: center; 
+  gap: 10px; 
+}
+
+
+@keyframes float {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+.icono-animado {
+  animation: float 3s ease-in-out infinite; 
+  display: inline-block; 
+  width: 32px; 
+  height: 32px; 
+}
+
+
+ion-card-title {
+  font-size: 20px; 
+  color: #002649; 
+  font-weight:500; 
+}
+
+.icon-image {
+  width: 24px; 
+  height: 24px; 
+  object-fit: contain; 
+  vertical-align: middle; 
+}
+
+.icon-image2{
+  width: 40%; 
+  height: 40%; 
+  object-fit: contain; 
+  vertical-align: middle; 
+}
+
+.custom-button{
+  border-radius: 8px; /* Redondeado opcional */
+  --padding-start: 12px;
+  --padding-end: 12px;
+  --box-shadow: none; /* Si necesitas quitar sombras predeterminadas */
+}
+
+.custom-link {
+  text-decoration: none; 
+  color: #ffffff; 
+  font-weight: 500; 
+  font-size: 13px; 
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  text-align: center;
+}
+
+.ranking-medallas{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
+  gap: 15px;
+  flex-wrap: wrap;
+  align-content: stretch;
+  padding: 0 0 30px 0;
 }
