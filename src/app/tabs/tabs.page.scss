@@ -1,0 +1,28 @@
+.icon-image {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+  vertical-align: middle;
+  padding-top: 5px;
+}
+
+ion-tab-bar {
+  --background: #002649;
+  --color: #ffffff;
+  --color-selected: #ffffff;
+  height: 50px; 
+  padding: 5px 0 0 0; 
+}
+
+ion-tab-button {
+  --background: transparent;
+  border-radius: 8px;
+  margin: 5px;
+}
+
+ion-tab-button.tab-selected {
+  --background: #193d66;
+  --color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}

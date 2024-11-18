@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { AvatarSelectorComponent } from '../avatar-selector/avatar-selector.component';
 import { SqliteService } from '../services/sqlite.service';
-import { Router } from '@angular/router'; 
+import { Router } from '@angular/router';
 import { DesafiosService } from '../services/desafios.service';
 import { AvatarApiService } from '../services/avatar-api.service';
 
@@ -13,18 +13,18 @@ import { AvatarApiService } from '../services/avatar-api.service';
 })
 export class HomePage implements OnInit {
   nombreUsuario: string = '';
-  nombreAvatar: string  = '';
+  nombreAvatar: string = '';
   nivelUsuario: number = 0;
   puntosUsuario: number = 0;
   primerosDesafios: any[] = [];
   avatarNombre: string = '';
-  selectedAvatar: string = 'assets/avatars/avatar1.png'; // Avatar predeterminado
+  selectedAvatar: string = 'assets/images/logo_gato.png'; // Avatar predeterminado
   nivelPorcentaje: number = 0; // Porcentaje de la barra de nivel
   puntosPorcentaje: number = 0; // Porcentaje de la barra de experiencia
 
   constructor(
-    private sqliteService: SqliteService, 
-    private router: Router, 
+    private sqliteService: SqliteService,
+    private router: Router,
     private desafiosService: DesafiosService,
     private avatarApiService: AvatarApiService,
     private modalController: ModalController
@@ -32,11 +32,10 @@ export class HomePage implements OnInit {
 
   async ngOnInit() {
     await this.actualizarUsuario();
-    this.primerosDesafios = this.desafiosService.obtenerDesafios().slice(0, 3);
+    this.cargarDesafios();
     this.nombreUsuario = await this.sqliteService.traerNombreUsuario();
     this.avatarNombre = this.avatarApiService.traerAvatar(this.nombreUsuario);
     this.actualizarPorcentajes();
-    console.log('Nombre Avatar desde HomePage:', this.nombreAvatar);
   }
 
   async openAvatarSelection() {
@@ -64,7 +63,7 @@ export class HomePage implements OnInit {
       this.nombreUsuario = usuario.username;
       this.nivelUsuario = usuario.nivel;
       this.puntosUsuario = usuario.puntos_totales;
-      this.nombreAvatar = usuario.nombre + " " + usuario.apellido;
+      this.nombreAvatar = usuario.nombre + ' ' + usuario.apellido;
       this.actualizarPorcentajes(); // Actualiza los porcentajes de las barras después de obtener los datos del usuario
     }
   }
@@ -73,5 +72,14 @@ export class HomePage implements OnInit {
     // Ajusta los cálculos según tus requerimientos específicos
     this.nivelPorcentaje = (this.nivelUsuario / 100) * 100; // Calcula el porcentaje de nivel
     this.puntosPorcentaje = (this.puntosUsuario / 1000) * 100; // Calcula el porcentaje de experiencia
+  }
+
+  cargarDesafios() {
+    this.primerosDesafios = this.desafiosService.obtenerDesafios().slice(0, 3); // Obtén los primeros 3 desafíos
+  }
+
+  irAMision(id: number) {
+    // Redirige a la página de detalles de la misión
+    this.router.navigate(['/desafios', id]);
   }
 }
