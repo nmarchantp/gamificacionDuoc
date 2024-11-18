@@ -25,7 +25,7 @@ export class DesafiosService {
       },
       { 
         id: 3, 
-        descripcion: 'Obten promedio final 6.5 ', 
+        descripcion: 'Obten promedio final sobre 6.5 ', 
         puntos: 1000, 
         completado: false, 
         fechaLimite: '31-12-2024', 
