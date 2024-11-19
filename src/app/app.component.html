@@ -2,7 +2,15 @@
   <ng-container *ngIf="!load">
     <p>Esperando a que la base de datos esté lista...</p>
   </ng-container>
-    <ion-router-outlet *ngIf="load"></ion-router-outlet>
-  <jeep-sqlite *ngIf="isWeb"></jeep-sqlite>
-</ion-app>
 
+  <!-- Web -->
+  <ng-container *ngIf="load && isWeb">
+    <ion-router-outlet></ion-router-outlet>
+    <jeep-sqlite></jeep-sqlite>
+  </ng-container>
+
+  <!-- Android/iOS -->
+  <ng-container *ngIf="load && !isWeb">
+    <ion-router-outlet></ion-router-outlet>
+  </ng-container>
+</ion-app>

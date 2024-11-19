@@ -40,6 +40,11 @@
           },
           "configurations": {
             "production": {
+              "sourceMap": {
+        "scripts": true,
+        "styles": true,
+        "hidden": false
+      },
               "budgets": [
                 {
                   "type": "initial",
@@ -65,7 +70,11 @@
               "optimization": false,
               "vendorChunk": true,
               "extractLicenses": false,
-              "sourceMap": true,
+              "sourceMap": {
+        "scripts": true,
+        "styles": true,
+        "hidden": false
+      },
               "namedChunks": true
             },
             "ci": {

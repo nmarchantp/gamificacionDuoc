@@ -28,12 +28,10 @@ export class AppComponent {
       await this.platform.ready();
       const info = await Device.getInfo();
       this.isWeb = info.platform === 'web';
-  
       if (this.isWeb) {
         const jeepSqliteEl = document.createElement('jeep-sqlite');
         document.body.appendChild(jeepSqliteEl);
       }
-  
       await this.sqlite.init();
   
       this.sqlite.dbready.subscribe(load => {

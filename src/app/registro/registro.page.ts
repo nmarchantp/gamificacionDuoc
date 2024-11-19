@@ -31,6 +31,7 @@ export class RegistroPage {
   }
 
   async cargaRoles(){
+    console.log('comienzo a cargar los roles');
     try{
       this.roles = await this.sqliteService.getRoles();
       console.log('Roles cargados: ',this.roles);
