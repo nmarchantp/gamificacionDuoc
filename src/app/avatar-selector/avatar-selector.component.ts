@@ -32,13 +32,6 @@ export class AvatarSelectorComponent implements OnInit {
     { url: 'assets/images/avatars/avatar21.png', category: 'female' },
     { url: 'assets/images/avatars/avatar22.png', category: 'female' },
     { url: 'assets/images/avatars/avatar23.png', category: 'female' },
-    { url: '', category: 'other' },
-    { url: '', category: 'other' },
-    { url: '', category: 'other' },
-    { url: '', category: 'other' },
-    { url: '', category: 'other' },
-    { url: '', category: 'other' },
-    { url: '', category: 'other' },
     
     // Agrega todos los avatares con sus categorías correspondientes
   ];

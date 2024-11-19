@@ -26,75 +26,115 @@
     <ion-card-header>
       <div class="user-info">
         <img [src]="selectedAvatar" alt="Avatar del usuario" class="avatar-img" (click)="openAvatarSelection()" />
-        <ion-card-title class="user-name">{{ nombreUsuario }}</ion-card-title>
+        <ion-card-title class="nombre-rol">
+          <span class="user-name">{{ nombreUsuario }}</span>
+          <ion-text class="rol-user">Estudiante</ion-text>
+        </ion-card-title>
         
-        <button class="action-button"><ion-icon name="create-outline"></ion-icon></button>
       </div>
-      
+
     </ion-card-header>
-  
-    <ion-card-content>
-      <div class="bars-container">
+
+    <ion-card-content class="bars-container">
+      <div>
         <!-- Barra de nivel (LVL) -->
         <div class="bar-row">
-          <ion-label class="bar-title1"><ion-icon name="heart"></ion-icon></ion-label>
+          <ion-label class="bar-title1"><img src="assets/icon/Heart.png" alt="Icono de vida" class="icono-vg" /></ion-label>
           <div class="bar">
             <div class="bar-progress1" [style.width.%]="nivelPorcentaje"></div>
           </div>
           <ion-label class="bar-value">{{ nivelUsuario }}</ion-label>
         </div>
-  
+
         <!-- Barra de experiencia (XP) -->
         <div class="bar-row">
-          <ion-label class="bar-title2"><ion-icon name="school"></ion-icon></ion-label>
+          <ion-label class="bar-title2"><img src="assets/icon/Helmet.png" alt="Icono de experiencia" class="icono-vg" /></ion-label>
           <div class="bar">
             <div class="bar-progress2" [style.width.%]="puntosPorcentaje"></div>
           </div>
           <ion-label class="bar-value">{{ puntosUsuario }}</ion-label>
         </div>
       </div>
-      
+
     </ion-card-content>
   </ion-card>
 
 
-  
 
-    <!-- Sección de Desafíos -->
-    <ion-card color="secondary">
-      <ion-card-header>
-        <ion-card-title>Lista de desafíos</ion-card-title>
-      </ion-card-header>
-      <ion-card-content>
-        <ion-list>
-          <ion-item *ngFor="let desafio of primerosDesafios">
-            <ion-label>
-              <ion-text class="desafio-descripcion">{{ desafio.descripcion }}</ion-text>
-              <ion-text class="desafio-puntos">Puntos: {{ desafio.puntos }}</ion-text>
-            </ion-label>
-          </ion-item>
-        </ion-list>
-        <ion-button expand="full" color="primary" routerLink="/tabs/desafios">Ver Todos los Desafíos</ion-button>
-      </ion-card-content>
-    </ion-card>
 
-    <!-- Sección de Premios -->
-    <ion-card color="secondary">
-      <ion-card-header>
-        <ion-card-title>Premios Disponibles</ion-card-title>
-      </ion-card-header>
-      <ion-card-content>
-        <ion-button expand="full" color="primary" routerLink="/premios">Ver Premios</ion-button>
-      </ion-card-content>
-    </ion-card>
+  <!-- Sección de Desafíos -->
+  <ion-card-header class="titulo-seccion">
+    <div class="titulo-juego">
+      <img src="assets/icon/Sword.png" alt="Icono de espada" class="icono-animado" />
+      <ion-card-title>Misiones de temporada</ion-card-title>
+    </div>
+  </ion-card-header>
 
-    <!-- Sección de Ranking -->
-    <ion-card color="secondary">
-      <ion-card-header>
-        <ion-card-title>Ranking de Usuarios</ion-card-title>
-      </ion-card-header>
-      <ion-card-content>
-        <ion-button expand="full" color="primary" routerLink="/ranking">Ver Ranking</ion-button>
-      </ion-card-content>
-    </ion-card>
+  <ion-card color="primary" class="profile-card ">
+    <ion-card-content>
+      <div class="desafios-container ">
+        <div *ngFor="let desafio of primerosDesafios" class="desafio-item">
+          <ion-card-header>
+            <ion-card-title>{{ desafio.descripcion }}</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <p><strong>XP:</strong> {{ desafio.puntos }} puntos</p>
+            <p><strong>Termina el:</strong> {{ desafio.fechaLimite }}</p>
+            <div class="revisar-mision">
+              <ion-button class="btn-detalle-mision" expand="default" color="primary"
+                (click)="irAMision(desafio.id)">Revisar misión del tablero</ion-button>
+            </div>
+          </ion-card-content>
+        </div>
+      </div>
+      <div>
+        <ion-router-link routerLink="/tabs/desafios" class="custom-link">
+          VER TODAS LAS MISIONES 
+        </ion-router-link>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+
+
+  <!-- Sección de Premios -->
+  <ion-card-header class="titulo-seccion">
+    <div class="titulo-juego">
+      <img src="assets/icon/Diamond.png" alt="Premio" class="icono-animado" />
+      <ion-card-title>Recompenzas</ion-card-title>
+    </div>
+  </ion-card-header>
+  <ion-card color="primary" class="profile-card">
+    <ion-card-content>
+      <ion-router-link routerLink="/tabs/premios" class="custom-link"> VER TODAS LAS RECOMPENZAS 
+      </ion-router-link>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Sección de Ranking -->
+  <ion-card-header class="titulo-seccion">
+    <div class="titulo-juego">
+      <img src="assets/icon/Crown.png" alt="ranking" class="icono-animado" />
+      <ion-card-title>Ranking</ion-card-title>
+    </div>
+  </ion-card-header>
+  <ion-card color="primary" class="profile-card">
+    <ion-card-content>
+      <div class="ranking-medallas">
+        <img src="assets/icon/diamante1.png" alt="medalla" class="icon-image2" />
+      <img src="assets/icon/diamante2.png" alt="medalla" class="icon-image2" />
+      <img src="assets/icon/oro1.png" alt="medalla" class="icon-image2" />
+      <img src="assets/icon/oro2.png" alt="medalla" class="icon-image2" />
+      <img src="assets/icon/plata1.png" alt="medalla" class="icon-image2" />
+      <img src="assets/icon/plata2.png" alt="medalla" class="icon-image2" />
+      <img src="assets/icon/bronce1.png" alt="medalla" class="icon-image2" />
+      <img src="assets/icon/bronce2.png" alt="medalla" class="icon-image2" />
+      
+     
+      
+    </div>
+      <ion-router-link routerLink="/tabs/ranking" class="custom-link"> VER TOP 10 DE ESTUDIANTES 
+      </ion-router-link>
+    </ion-card-content>
+  </ion-card>
 </ion-content>

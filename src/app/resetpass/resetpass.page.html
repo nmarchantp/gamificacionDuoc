@@ -1,27 +1,41 @@
-<ion-header>
+<ion-header class="ion-no-border">
   <ion-toolbar color="primary">
-    <ion-title>Restablecer Contraseña</ion-title>
+    <ion-title class="header-title">Restablecer contraseña</ion-title>
   </ion-toolbar>
 </ion-header>
 
+<div class="shapedividers_com-4940"></div>
+
+
+
+
 <ion-content class="ion-padding">
-  <ion-card>
-    <ion-card-header>
-      <ion-card-title>Recuperar Contraseña</ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-      <ion-item>
-        <ion-label position="floating">Nombre de Usuario</ion-label>
-        <ion-input [(ngModel)]="nombreUsuario"></ion-input>
+  <div class="recovery-container">
+    <!-- Imagen superior -->
+    <div class="image-container">
+      <img src="assets/icon/Key.png" alt="Recuperar Contraseña" class="recovery-image" />
+    </div>
+
+    <!-- Título -->
+    <h2 class="recovery-title">Recupera el ingreso a tu Guild</h2>
+
+    <!-- Formulario -->
+    <div class="form-container">
+      <ion-item class="input-item">
+        <ion-label position="floating" class="label">Nombre de Usuario</ion-label>
+        <ion-input [(ngModel)]="nombreUsuario" class="input"></ion-input>
       </ion-item>
 
-      <ion-button expand="full" (click)="recuperarContrasena()" color="secondary">
-        RECUPERAR
-      </ion-button>
+      <!-- Botones -->
+      <div class="button-container">
+        <ion-button expand="block" (click)="recuperarContrasena()" class="button-primary">
+          RECUPERAR
+        </ion-button>
 
-      <ion-button expand="full" (click)="volverAlLogin()" color="light">
-        Volver al Login
-      </ion-button>
-    </ion-card-content>
-  </ion-card>
+        <ion-button expand="block" (click)="volverAlLogin()" class="button-secondary">
+          VOLVER 
+        </ion-button>
+      </div>
+    </div>
+  </div>
 </ion-content>
