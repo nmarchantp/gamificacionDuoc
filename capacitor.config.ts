@@ -28,7 +28,9 @@ const config: CapacitorConfig = {
       showSpinner: false, // Oculta el spinner de carga en la pantalla inicial
     },
     CapacitorStorage: {
-      androidDatabaseLocation: 'default', // Ubicación de la base de datos para almacenamiento en Android
+      "iosDatabaseLocation": "Library/CapacitorDatabase",
+      "androidDatabaseLocation": "default", // Ubicación de la base de datos para almacenamiento en Android
+      "logging": true 
     },
   },
 };

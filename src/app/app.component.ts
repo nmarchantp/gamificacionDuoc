@@ -25,13 +25,13 @@ export class AppComponent {
 
   async initApp() {
     try {
-      await this.platform.ready();
-      const info = await Device.getInfo();
-      this.isWeb = info.platform === 'web';
-      if (this.isWeb) {
-        const jeepSqliteEl = document.createElement('jeep-sqlite');
-        document.body.appendChild(jeepSqliteEl);
-      }
+
+      this.platform.ready().then(async () => {
+        const info = await Device.getInfo();
+        this.isWeb = info.platform == 'web';
+        this.load = true;
+      })
+
       await this.sqlite.init();
   
       this.sqlite.dbready.subscribe(load => {

@@ -1,0 +1,20 @@
+{
+    "database": "gamificationDB",
+    "version": 1,
+    "encrypted": false,
+    "mode": "full",
+    "tables": [
+      {
+        "name": "Roles",
+        "schema": [
+          { "column": "id_rol", "value": "INTEGER PRIMARY KEY AUTOINCREMENT" },
+          { "column": "nombre_rol", "value": "TEXT NOT NULL UNIQUE" },
+          { "column": "estado_rol", "value": "TEXT NOT NULL" }
+        ],
+        "values": [
+          [1, "Usuario", "Activo"]
+        ]
+      }
+    ]
+  }
+  

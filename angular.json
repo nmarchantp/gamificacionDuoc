@@ -11,8 +11,11 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-builders/custom-webpack:browser",
           "options": {
+            "customWebpackConfig": {
+              "path": "./webpack.config.js"
+            },
             "outputPath": "www",
             "index": "src/index.html",
             "main": "src/main.ts",
@@ -41,10 +44,10 @@
           "configurations": {
             "production": {
               "sourceMap": {
-        "scripts": true,
-        "styles": true,
-        "hidden": false
-      },
+                "scripts": true,
+                "styles": true,
+                "hidden": false
+              },
               "budgets": [
                 {
                   "type": "initial",
@@ -71,10 +74,10 @@
               "vendorChunk": true,
               "extractLicenses": false,
               "sourceMap": {
-        "scripts": true,
-        "styles": true,
-        "hidden": false
-      },
+                "scripts": true,
+                "styles": true,
+                "hidden": false
+              },
               "namedChunks": true
             },
             "ci": {
@@ -84,13 +87,13 @@
           "defaultConfiguration": "production"
         },
         "serve": {
-          "builder": "@angular-devkit/build-angular:dev-server",
+          "builder": "@angular-builders/custom-webpack:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "app:build:production"
+              "browserTarget": "app:build:production"
             },
             "development": {
-              "buildTarget": "app:build:development"
+              "browserTarget": "app:build:development"
             },
             "ci": {
               "progress": false
