@@ -559,15 +559,21 @@ export class SqliteService {
 
   async openConnection() {
     try {
+      console.log("inicio open connection");
       if (this.isConnected) {
+
         console.log(`Cerrando la conexión existente a ${this.dbName}.`);
         await this.closeConnection();
+
       }
-  
+      console.log("ingreso antes de createconnection");
       await CapacitorSQLite.createConnection({ database: this.dbName });
+      console.log("paso createconnection");
       await CapacitorSQLite.open({ database: this.dbName });
+      console.log("paso open");
       this.isConnected = true; // Actualiza el estado
       console.log(`Conexión a la base de datos ${this.dbName} abierta.`);
+
     } catch (error) {
       console.error("Error al abrir la conexion:", error);
       throw error;
@@ -577,7 +583,9 @@ export class SqliteService {
   async closeConnection() {
     try {
       if (this.isConnected) {
+        console.log("comienzo a cerrar conexion");
         await CapacitorSQLite.close({ database: this.dbName });
+        console.log("paso close");
         this.isConnected = false; // Actualiza el estado
         console.log(`Conexión a la base de datos ${this.dbName} cerrada.`);
       } else {
@@ -769,6 +777,7 @@ export class SqliteService {
 
   async getRoles() {
     try {
+      console.log("abro conexion en getRoles");
       await this.openConnection(); // Abre la conexión antes de ejecutar la consulta
       const query = `SELECT * FROM Roles`;
       const result = await CapacitorSQLite.query({
@@ -811,6 +820,7 @@ async consultas(query: string, params: any[] = []) {
   //luego valida si el usuario existe y si tiene permisos para acceder
   async login(username: string, password: string): Promise<boolean> {
     try {
+      console.log("abro conexion en login");
       await this.openConnection(); // Abre la conexión antes de realizar la consulta
   
       const query = `SELECT * FROM Usuarios WHERE username = ? AND password = ?`;

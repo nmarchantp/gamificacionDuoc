@@ -1,22 +1,22 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'io.ionic.starter', // Cambia esto si tienes un ID específico para la app
+  appId: 'cl.duoc.PGY4121', 
   appName: 'gamificacionDuoc',
   webDir: 'www',
-  bundledWebRuntime: false, // Evita incluir Capacitor Web Runtime si ya estás usando un framework como Ionic
+  bundledWebRuntime: false, 
 
   server: {
-    androidScheme: 'https', // Usa HTTPS en Android para mayor compatibilidad
+    androidScheme: 'https', 
   },
 
   android: {
-    allowMixedContent: true, // Permite contenido HTTP en Android si consumes APIs HTTP
-    backgroundColor: '#FFFFFF', // Define un color de fondo predeterminado
+    allowMixedContent: true, 
+    backgroundColor: '#FFFFFF', 
   },
 
   ios: {
-    contentInset: 'always', // Ajusta el espacio entre el contenido y la barra superior en iOS
+    contentInset: 'always', 
   },
 
   plugins: {
@@ -29,7 +29,7 @@ const config: CapacitorConfig = {
     },
     CapacitorStorage: {
       "iosDatabaseLocation": "Library/CapacitorDatabase",
-      "androidDatabaseLocation": "default", // Ubicación de la base de datos para almacenamiento en Android
+      "androidDatabaseLocation": "default",
       "logging": true 
     },
   },
