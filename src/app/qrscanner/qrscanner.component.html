@@ -1,0 +1,8 @@
+<ion-content>
+  <ion-button expand="block" (click)="tomarFoto()">Abrir Cámara</ion-button>
+
+  <div *ngIf="imageUrl">
+    <p>Imagen capturada:</p>
+    <img [src]="imageUrl" alt="Foto tomada" style="max-width: 100%;" />
+  </div>
+</ion-content>

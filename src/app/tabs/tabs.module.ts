@@ -5,6 +5,7 @@ import { RouterModule } from '@angular/router';
 
 import { TabsPage } from './tabs.page';
 import { TabsPageRoutingModule } from './tabs-routing.module';
+import { QRScannerComponent } from '../qrscanner/qrscanner.component'; 
 
 @NgModule({
   imports: [
@@ -13,6 +14,6 @@ import { TabsPageRoutingModule } from './tabs-routing.module';
     RouterModule,
     TabsPageRoutingModule  
   ],
-  declarations: [TabsPage] 
+  declarations: [TabsPage, QRScannerComponent] 
 })
 export class TabsPageModule {}

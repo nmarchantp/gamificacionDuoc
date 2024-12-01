@@ -80,13 +80,16 @@ public async openConnection() {
 
 public async closeConnection() {
   if (this.connectionOpen) {
-      try {
-          await CapacitorSQLite.close({ database: this.dbName });
-          this.connectionOpen = false; // Marca que la conexión está cerrada
-          console.log(`Conexión cerrada para la base de datos ${this.dbName}.`);
-      } catch (error) {
-          console.log("No hay una conexión abierta para cerrar.");
-      }
+    try {
+      console.log('Intentando cerrar la conexión...');
+      await CapacitorSQLite.close({ database: this.dbName });
+      this.connectionOpen = false;
+      console.log(`Conexión cerrada para la base de datos ${this.dbName}.`);
+    } catch (error) {
+      console.error("Error al cerrar la conexión:", error);
+    }
+  } else {
+    console.log("No hay una conexión abierta para cerrar.");
   }
 }
 
@@ -136,7 +139,7 @@ async downloadDatabase() {
       
   
       // Elimina configuraciones previas
-      await Preferences.remove({ key: 'first_setup_key' });
+      //await Preferences.remove({ key: 'first_setup_key' });
   
       // Obtiene información del dispositivo
       const info = await Device.getInfo();
@@ -318,34 +321,34 @@ async consultas(query: string, params: any[] = []) {
   //luego valida si el usuario existe y si tiene permisos para acceder
   async login(username: string, password: string): Promise<boolean> {
     try {
-      console.log("abro conexion en login");
-      await this.openConnection(); // Abre la conexión antes de realizar la consulta
+      console.log('Intentando abrir conexión...');
+      await this.openConnection(); 
   
+      console.log('Conexión abierta, ejecutando query...');
       const query = `SELECT * FROM Usuarios WHERE username = ? AND password = ?`;
       const result = await CapacitorSQLite.query({
         database: this.dbName,
         statement: query,
-        values: [username, password]
+        values: [username, password],
       });
   
-      console.log(result);
+      console.log('Resultado de query:', result);
   
       if (result.values && result.values.length > 0) {
         this.currentUser = result.values[0];
         this.isAuthenticated.next(true);
-        console.log("Usuario autenticado desde SQLite:", this.currentUser);
         return true;
-      } else {
-        console.error("Usuario o credenciales incorrectas en SQLite.");
-        return false;
       }
+      console.error('Usuario no encontrado.');
+      return false;
     } catch (error) {
-      console.error("Error en la autenticación:", error);
-      return false; // Manejo del error en caso de fallo
+      console.error('Error en login:', error);
+      return false;
     } finally {
-      await this.closeConnection(); // Asegura que la conexión se cierre siempre
+      await this.closeConnection();
     }
   }
+  
   
 
   async registerUser(

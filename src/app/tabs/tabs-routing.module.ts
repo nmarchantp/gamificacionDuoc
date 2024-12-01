@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { TabsPage } from './tabs.page';
+import { QRScannerComponent } from '../qrscanner/qrscanner.component';
 
 const routes: Routes = [
   {
@@ -14,6 +15,10 @@ const routes: Routes = [
       {
         path: 'desafios',
         loadChildren: () => import('../desafios/desafios.module').then(m => m.DesafiosPageModule)
+      },
+      {
+        path: 'qr', 
+        component: QRScannerComponent 
       },
       // {
       //   path: 'ranking',
