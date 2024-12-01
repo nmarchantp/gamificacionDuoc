@@ -1,401 +1,335 @@
+FUNCIONA EN LA WEB!
+
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { CapacitorSQLite, JsonSQLite } from '@capacitor-community/sqlite';
+import { CapacitorSQLite, JsonSQLite, SQLiteConnection } from '@capacitor-community/sqlite';
 import { isPlatform } from '@ionic/angular';
 import { Capacitor } from '@capacitor/core';
 import { Device } from '@capacitor/device';
 import { Preferences } from '@capacitor/preferences';
-import { BehaviorSubject, catchError, Observable, of, retry } from 'rxjs';
+import { BehaviorSubject, catchError, lastValueFrom, Observable, of, retry } from 'rxjs';
 import { __awaiter } from 'tslib';
 
+
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class SqliteService {
+
   public dbready: BehaviorSubject<boolean>;
   public isAuthenticated: BehaviorSubject<boolean> = new BehaviorSubject(false);
   public isWeb: boolean;
   public isIos: boolean;
   public dbName: string;
   private currentUser: any = null;
+  sqliteConnection!: SQLiteConnection;
+  private isConnected: boolean = false;
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient) { 
     this.dbready = new BehaviorSubject(false);
     this.isWeb = false;
     this.isIos = false;
     this.dbName = 'gamificationDB';
+    this.initWebStore();
   }
 
-  ngOninit() {}
+  ngOninit(){
 
-  async downloadDatabase() {
-    try {
-      this.http.get('assets/db/db.json').subscribe(
-        async (jsonExport: JsonSQLite) => {
-          try {
-            const jsonstring = JSON.stringify(jsonExport);
-            console.log('JSON descargado:', jsonstring);
-            const isValid = await CapacitorSQLite.isJsonValid({ jsonstring });
+  }
 
-            if (isValid.result) {
-              this.dbName = jsonExport.database;
-
-              await CapacitorSQLite.importFromJson({ jsonstring });
-              console.log('Base de datos importada exitosamente desde JSON.');
-              const usuarios = await this.getAllUsers();
-              console.log(usuarios);
-
-              this.dbready.next(true);
-            } else {
-              console.error('El JSON de la base de datos no es válido');
-            }
-          } catch (error) {
-            console.error(
-              'Error durante la importación de la base de datos desde JSON:',
-              error
-            );
-          }
-        },
-        (error) => {
-          console.error(
-            'Error al descargar el archivo JSON de la base de datos:',
-            error
-          );
-        }
-      );
-    } catch (error) {
-      console.error(
-        'Error en el proceso de descarga de la base de datos:',
-        error
-      );
+  private async initWebStore() {
+    if (document.querySelector('jeep-sqlite') === null) {
+        const jeepSqliteEl = document.createElement('jeep-sqlite');
+        document.body.appendChild(jeepSqliteEl);
+        await customElements.whenDefined('jeep-sqlite');
+        await CapacitorSQLite.initWebStore(); 
     }
-  }
+}
 
-  // async init() {
-  //   try {
-  //     console.log("Iniciando inicialización en el servicio SQLite...");
-
-  //     // Cierra conexiones existentes
-  //     try {
-  //       await CapacitorSQLite.closeConnection({ database: this.dbName });
-  //       console.log("Conexión previa cerrada correctamente.");
-  //     } catch (error) {
-  //       console.warn("No se pudo cerrar la conexión previa (o no existía):", error);
-  //     }
-
-  //     // Crea una nueva conexión
-  //     try {
-  //       await CapacitorSQLite.createConnection({ database: this.dbName });
-  //       console.log("Conexión a la base de datos creada correctamente.");
-  //     } catch (error) {
-  //       console.error("Error al crear la conexión:", error);
-  //       throw error;
-  //     }
-
-  //     // Abre la base de datos
-  //     try {
-  //       await CapacitorSQLite.open({ database: this.dbName });
-  //       console.log("Base de datos abierta correctamente.");
-  //     } catch (error) {
-  //       console.error("Error al abrir la base de datos:", error);
-  //       throw error;
-  //     }
-
-  //     // Crea tablas si es necesario
-  //     console.log("Verificando si la base de datos está disponible...");
-  //     const isAvailable = await CapacitorSQLite.isDatabase({ database: this.dbName });
-  //     if (!isAvailable.result) {
-  //       console.log("La base de datos no está disponible. Creándola...");
-  //       await this.createTables();
-  //     } else {
-  //       console.log("La base de datos ya está disponible.");
-  //     }
-
-  //     console.log("Finalizando inicialización.");
-  //     this.dbready.next(true);
-  //   } catch (error) {
-  //     console.error("Error durante la inicialización en el servicio SQLite:", error);
-  //     this.dbready.next(false);
-  //   }
-  // }
-  async init(isweb: boolean) {
-    try {
-      console.log('Iniciando inicialización en el servicio SQLite...');
-
-      // Eliminar preferencias previas (opcional, para limpiar durante pruebas)
-      await Preferences.remove({ key: 'first_setup_key' });
-      // Cierra conexiones existentes si las hay
+public async openConnection() {
+  if (!this.isConnected) {
       try {
-        console.log('Intentando cerrar conexiones existentes...');
-        await CapacitorSQLite.closeConnection({ database: this.dbName });
-        console.log('Conexión previa cerrada correctamente.');
+          await CapacitorSQLite.createConnection({
+              database: this.dbName,
+          });
+          await CapacitorSQLite.open({ database: this.dbName });
+          this.isConnected = true; 
+          console.log(`[${new Date().toISOString()}] Conexion de ${this.dbName} abierta.`);
       } catch (error) {
-        console.warn(
-          'No se pudo cerrar la conexión previa (o no existía):',
-          error
-        );
+          console.error(`[${new Date().toISOString()}] Error abriendo Conexion:`, error);
+          throw error;
       }
+  } else {
+      console.log(`[${new Date().toISOString()}] Conexion a ${this.dbName} ya está abierta.`);
+  }
+}
 
-      this.isWeb = isweb;
-      console.log('Plataforma detectada:', this.isWeb ? 'Web' : 'Nativa');
+public async closeConnection() {
+  if (this.isConnected) {
+      try {
+          await CapacitorSQLite.close({ database: this.dbName });
+          this.isConnected = false;
+          console.log(`[${new Date().toISOString()}] Conexioon a base de datos ${this.dbName} cerraada.`);
+      } catch (error) {
+          console.warn("Error cerrando cobnexion:", error);
+      }
+  } else {
+      console.log(` [${new Date().toISOString()}] no hay conexion acitva para cerrar ${this.dbName}.`);
+  }
+}
+  
+  
+async downloadDatabase() {
+  try {
+    // Descarga el archivo JSON
+    const jsonExport: JsonSQLite = await lastValueFrom(this.http.get<JsonSQLite>('assets/db/db.json'));
 
-      // Configuración para Web
-      if (this.isWeb) {
-        console.log('Inicializando para Web...');
+    try {
+      const jsonstring = JSON.stringify(jsonExport);
+      console.log("JSON descargado:", jsonstring);
+
+      // Valida el JSON descargado
+      const isValid = await CapacitorSQLite.isJsonValid({ jsonstring });
+      console.log("Es válido:", isValid.result);
+
+      if (isValid.result) {
+        this.dbName = jsonExport.database;
+        // Importa el JSON a la base de datos
+        await CapacitorSQLite.importFromJson({ jsonstring });
+        console.log("Base de datos importada exitosamente desde JSON.");
+
+        // Actualiza el estado de la base de datos a lista
+        this.dbready.next(true);
+      } else {
+        console.error("El JSON de la base de datos no es válido");
+      }
+    } catch (error) {
+      console.error("Error durante la importación de la base de datos desde JSON:", error);
+    }
+  } catch (error) {
+    console.error("Error al descargar el archivo JSON de la base de datos:", error);
+  }
+}
+  
+  async init() {
+    try {
+      // Cierra cualquier conexión activa
+      //await this.closeConnection();
+  
+      // Elimina configuraciones previas
+      await Preferences.remove({ key: 'first_setup_key' });
+  
+      // Obtiene información del dispositivo
+      const info = await Device.getInfo();
+      const sqlite = CapacitorSQLite as any;
+  
+      // Configuración específica según la plataforma
+      if (info.platform === 'android') {
+        try {
+          await sqlite.requestPermissions();
+        } catch (error) {
+          console.error("Esta app necesita permisos para funcionar");
+        }
+      } else if (info.platform === 'web') {
         const jeepSqliteEl = document.createElement('jeep-sqlite');
         document.body.appendChild(jeepSqliteEl);
         await customElements.whenDefined('jeep-sqlite');
         await CapacitorSQLite.initWebStore();
-        console.log('Plugin SQLite inicializado en Web.');
       }
-
-      // Verificar si la base de datos ya está configurada
+  
+      // Verifica si se requiere configuración inicial
       const dbSetup = await Preferences.get({ key: 'first_setup_key' });
-      console.log("dbsetup"+dbSetup.value);
-      if (dbSetup.value) {
-        console.log('Configuración inicial detectada. Creando conexión...');
-
-        // Crear una nueva conexión y abrir la base de datos
-        await CapacitorSQLite.createConnection({ database: this.dbName });
-        console.log('Conexión creada exitosamente.');
-        await CapacitorSQLite.open({ database: this.dbName });
-        console.log('Base de datos abierta correctamente.');
-
-        // Crear tablas y descargar datos iniciales
-        console.log("Creando tablas...");
+  
+      await this.openConnection();
+  
+      if (!dbSetup.value) {
+        console.log(`[${new Date().toISOString()}] Inicio de configuración inicial de la base de datos`);
         await this.createTables();
-        console.log('Tablas creadas correctamente.');
-
-        console.log('Descargando base de datos inicial...');
+        console.log(`[${new Date().toISOString()}] Creación de tablas completada`);
         await this.downloadDatabase();
-        console.log('Base de datos inicial descargada correctamente.');
-
-        // Establecer la preferencia para indicar que la configuración inicial está completa
+        console.log(`[${new Date().toISOString()}] Base de datos descargada e inicializada`);
         await Preferences.set({ key: 'first_setup_key', value: '1' });
-        console.log('Configuración inicial completada.');
       } else {
-        console.log('Conexión existente detectada. Reutilizando conexión...');
-
-        // Reutilizar conexión existente
-        await CapacitorSQLite.createConnection({ database: this.dbName });
-        console.log('Conexión reutilizada.');
-        await CapacitorSQLite.open({ database: this.dbName });
-        console.log('Base de datos reutilizada y abierta correctamente.');
+        console.log("La base de datos ya estaba configurada previamente");
       }
-
-      // Verificar si la base de datos está disponible
-      console.log('Verificando si la base de datos está disponible...');
-      const isAvailable = await CapacitorSQLite.isDatabase({
-        database: this.dbName,
-      });
-      if (!isAvailable.result) {
-        console.error('La base de datos no está disponible. Creándola...');
-        await this.createTables();
-      } else {
-        console.log('La base de datos está disponible.');
-      }
-
-      // Emitir que la base de datos está lista
-      console.log('Base de datos lista.');
+  
       this.dbready.next(true);
     } catch (error) {
-      console.error(
-        'Error durante la inicialización en el servicio SQLite:',
-        error
-      );
+      console.error("Error durante la inicialización:", error);
       this.dbready.next(false);
+    } finally {
+      await this.closeConnection(); 
     }
   }
-
-  // creo tyablas usuario, roles, niveles, desafios, historial
+  
+  
   // creo tyablas usuario, roles, niveles, desafios, historial
   async createTables() {
     try {
+
       const createRolesTable = `
-      CREATE TABLE IF NOT EXISTS Roles  ( 
-        id_rol INTEGER PRIMARY KEY AUTOINCREMENT,
-        nombre_rol TEXT NOT NULL UNIQUE,
-        estado_rol  TEXT NOT NULL
-        );
-    `;
-      console.log('Tabla de Roles creada');
+        CREATE TABLE IF NOT EXISTS Roles  ( 
+          id_rol INTEGER PRIMARY KEY AUTOINCREMENT,
+          nombre_rol TEXT NOT NULL UNIQUE,
+          estado_rol  TEXT NOT NULL
+          );
+      `;
+      console.log("Tabla de Roles creada");
 
       const createDesafiosTable = `
-      CREATE TABLE IF NOT EXISTS Desafios (
-        id_desafio INTEGER PRIMARY KEY AUTOINCREMENT,
-        nombre_desafio TEXT NOT NULL,
-        descripcion TEXT,
-        puntos INTEGER NOT NULL
-      );
-    `;
-      console.log('Tabla de Desafios creada');
+        CREATE TABLE IF NOT EXISTS Desafios (
+          id_desafio INTEGER PRIMARY KEY AUTOINCREMENT,
+          nombre_desafio TEXT NOT NULL,
+          descripcion TEXT,
+          puntos INTEGER NOT NULL
+        );
+      `;
+      console.log("Tabla de Desafios creada");
 
       const createUsuariosTable = `
-      CREATE TABLE IF NOT EXISTS Usuarios (
-        id_user INTEGER PRIMARY KEY AUTOINCREMENT,
-        username TEXT NOT NULL UNIQUE,
-        email TEXT NOT NULL UNIQUE,
-        password TEXT NOT NULL,
-        nombre TEXT NOT NULL,
-        apellido TEXT NOT NULL,
-        id_rol  INTEGER NOT NULL,
-        FOREIGN KEY (id_rol) REFERENCES Roles(id_rol)
-      );
-    `;
-      console.log('Tabla de Usuarios creada');
+        CREATE TABLE IF NOT EXISTS Usuarios (
+          id_user INTEGER PRIMARY KEY AUTOINCREMENT,
+          username TEXT NOT NULL UNIQUE,
+          email TEXT NOT NULL UNIQUE,
+          password TEXT NOT NULL,
+          nombre TEXT NOT NULL,
+          apellido TEXT NOT NULL,
+          id_rol  INTEGER NOT NULL,
+          FOREIGN KEY (id_rol) REFERENCES Roles(id_rol)
+        );
+      `;
+      console.log("Tabla de Usuarios creada");
 
       const createNivelesTable = `
-      CREATE TABLE IF NOT EXISTS Niveles (
-        id_nivel INTEGER PRIMARY KEY AUTOINCREMENT,
-        id_user INTEGER NOT NULL,
-        nivel INTEGER DEFAULT 1, 
-        puntos_totales INTEGER DEFAULT 0,
-        FOREIGN KEY (id_user) REFERENCES Usuarios(id_user) ON DELETE CASCADE
-      );
-    `;
-      console.log('Tabla de Niveles creada');
+        CREATE TABLE IF NOT EXISTS Niveles (
+          id_nivel INTEGER PRIMARY KEY AUTOINCREMENT,
+          id_user INTEGER NOT NULL,
+          nivel INTEGER DEFAULT 1, 
+          puntos_totales INTEGER DEFAULT 0,
+          FOREIGN KEY (id_user) REFERENCES Usuarios(id_user) ON DELETE CASCADE
+        );
+      `;
+      console.log("Tabla de Niveles creada");
 
       const createHistorialDesafiosTable = `
-      CREATE TABLE IF NOT EXISTS HistorialDesafios (
-        id_desafio_h INTEGER PRIMARY KEY AUTOINCREMENT,
-        id_user INTEGER,
-        id_desafio INTEGER,
-        fecha_completado DATETIME DEFAULT CURRENT_TIMESTAMP,
-        puntos_ganados INTEGER,
-        FOREIGN KEY (id_user) REFERENCES Usuarios(id_user),
-        FOREIGN KEY (id_desafio) REFERENCES Desafios(id_desafio)
-      );
-    `;
-      console.log('Tabla de HistorialDesafios creada');
+        CREATE TABLE IF NOT EXISTS HistorialDesafios (
+          id_desafio_h INTEGER PRIMARY KEY AUTOINCREMENT,
+          id_user INTEGER,
+          id_desafio INTEGER,
+          fecha_completado DATETIME DEFAULT CURRENT_TIMESTAMP,
+          puntos_ganados INTEGER,
+          FOREIGN KEY (id_user) REFERENCES Usuarios(id_user),
+          FOREIGN KEY (id_desafio) REFERENCES Desafios(id_desafio)
+        );
+      `;
+      console.log("Tabla de HistorialDesafios creada");
 
-      await CapacitorSQLite.execute({
-        database: this.dbName,
-        statements: `${createUsuariosTable} ${createRolesTable} ${createNivelesTable} ${createDesafiosTable} ${createHistorialDesafiosTable}`,
+      await CapacitorSQLite.execute({ 
+        database: this.dbName, 
+        statements: `${createUsuariosTable} ${createRolesTable} ${createNivelesTable} ${createDesafiosTable} ${createHistorialDesafiosTable}` 
       });
 
-      console.log('Tablas creadas correctamente en la base de datos.');
+      console.log("Tablas creadas correctamente en la base de datos.");
     } catch (error) {
-      console.error('Error al crear las tablas:', error);
+      console.error("Error al crear las tablas:", error);
     }
   }
 
-  // async deleteDatabase(dbName: string) {
-  //   try {
-  //     // Abre la conexión si no está abierta
-  //     await CapacitorSQLite.createConnection({ database: dbName });
-  //     await CapacitorSQLite.open({ database: dbName });
-
-  //     // Ahora que la conexión está abierta, procede a eliminar la base de datos
-  //     await CapacitorSQLite.deleteDatabase({ database: dbName });
-  //     console.log(`Base de datos ${dbName} eliminada correctamente`);
-  //   } catch (err) {
-  //     console.error('Error al eliminar la base de datos:', err);
-  //   }
-  // }
-
+  
+  
+  
   async getDbName() {
-    if (!this.dbName) {
-      const dbname = await Preferences.get({ key: 'dbname' });
-      if (dbname.value) {
-        this.dbName = dbname.value;
+    try {
+      await this.openConnection(); // Abre la conexión antes de las operaciones
+      if (!this.dbName) {
+        const dbname = await Preferences.get({ key: 'dbname' });
+        if (dbname.value) {
+          this.dbName = dbname.value;
+        }
       }
+      return this.dbName; // Devuelve el nombre de la base de datos
+    } catch (error) {
+      console.error("Error al obtener el nombre de la base de datos:", error);
+      throw error; // Propaga el error para manejarlo externamente si es necesario
+    } finally {
+      await this.closeConnection(); // Asegura que la conexión se cierre siempre
     }
-    return this.dbName;
   }
 
   async getRoles() {
-    await CapacitorSQLite.open({ database: this.dbName });
-    console.log('query SELECT * FROM Roles');
-    const query = `SELECT * FROM Roles`;
-    const result = await CapacitorSQLite.query({
-      database: this.dbName,
-      statement: query,
-      values: [],
-    });
-    console.log(result.values);
-    return result.values || [];
-  }
-
-  //metodo para realizar cualquier consuilta y mostrarlo en consola
-  async consultas(query: string, params: any[] = []) {
     try {
+      console.log("abro conexion en getRoles");
+      await this.openConnection(); // Abre la conexión antes de ejecutar la consulta
+      const query = `SELECT * FROM Roles`;
       const result = await CapacitorSQLite.query({
+        database: this.dbName,
         statement: query,
-        values: params,
+        values: []
       });
-      console.log('Resultado de la consulta:', result.values);
-      return result.values;
+      console.log(result.values);
+      return result.values || []; // Devuelve los resultados de la consulta
     } catch (error) {
-      console.error('Error al ejecutar la consulta:', error);
-      throw error;
+      console.error("Error al obtener los roles:", error);
+      throw error; // Propaga el error para manejarlo externamente si es necesario
+    } finally {
+      await this.closeConnection(); // Asegura que la conexión se cierre siempre
     }
   }
+  
+
+//metodo para realizar cualquier consuilta y mostrarlo en consola
+async consultas(query: string, params: any[] = []) {
+  try {
+    await this.openConnection(); // Abre la conexión antes de ejecutar la consulta
+    const result = await CapacitorSQLite.query({
+      statement: query,
+      values: params
+    });
+    console.log('Resultado de la consulta:', result.values);
+    return result.values; // Devuelve los resultados de la consulta
+  } catch (error) {
+    console.error('Error al ejecutar la consulta:', error);
+    throw error; // Propaga el error para manejo externo
+  } finally {
+    await this.closeConnection(); // Asegura que la conexión se cierre siempre
+  }
+}
+
+
 
   //metodo que consulta la base de datos segun el username y password entregado
   //luego valida si el usuario existe y si tiene permisos para acceder
   async login(username: string, password: string): Promise<boolean> {
     try {
-      // await CapacitorSQLite.createConnection({ database: this.dbName });
-      await CapacitorSQLite.open({ database: this.dbName });
+      console.log("abro conexion en login");
+      await this.openConnection(); // Abre la conexión antes de realizar la consulta
+  
       const query = `SELECT * FROM Usuarios WHERE username = ? AND password = ?`;
       const result = await CapacitorSQLite.query({
         database: this.dbName,
         statement: query,
-        values: [username, password],
+        values: [username, password]
       });
-      //await this.consultas('SELECT * FROM Usuarios WHERE username = ?', [username]);
+  
       console.log(result);
+  
       if (result.values && result.values.length > 0) {
         this.currentUser = result.values[0];
         this.isAuthenticated.next(true);
-        console.log('Usuario autenticado desde SQLite_:', this.currentUser);
+        console.log("Usuario autenticado desde SQLite:", this.currentUser);
         return true;
       } else {
-        console.error('Usuario o credenciales incorrectas en SQLite.');
+        console.error("Usuario o credenciales incorrectas en SQLite.");
         return false;
       }
-
-      // const apiResult: any = await this.http.get(this.apiUrl).toPromise();
-      // console.log(apiResult);
-
-      // if (apiResult && apiResult.results && Array.isArray(apiResult.results)) {
-      //   const apiUser = apiResult.results.find((user: any) =>
-      //     user.login.username === username && user.login.password === password
-      //   );
-
-      //   if (apiUser) {
-      //     this.currentUser = {
-      //       username: apiUser.login.username,
-      //       password: apiUser.login.password,
-      //       name: `${apiUser.name.first} ${apiUser.name.last}`,
-      //       email: apiUser.email
-      //     };
-      //     this.isAuthenticated.next(true);
-      //     console.log("Usuario autenticado desde la API:", this.currentUser);
-      //     return true;
-      //   } else {
-      //     console.error("Usuario o credenciales incorrectas en ambas fuentes");
-      //   }
-      // } else {
-      //   console.error("La respuesta de la API no contiene la estructura esperada.");
-      // }
     } catch (error) {
-      console.error('Error en la autenticación:', error);
-      return false;
+      console.error("Error en la autenticación:", error);
+      return false; // Manejo del error en caso de fallo
+    } finally {
+      await this.closeConnection(); // Asegura que la conexión se cierre siempre
     }
-    //no puedo usar el localstorage para  guardar el usuario
-    //por lo tanto no lo puedo autenticar desde aca
-    //   const storedUser = await this.getUsuarioLocalStorage();
-    // if (storedUser && storedUser.username === username && storedUser.password === password) {
-    //   this.currentUser = storedUser;
-    //   this.isAuthenticated.next(true);
-    //   console.log("Usuario autenticado desde localStorage:", this.currentUser);
-    //   return true;
-    // } else {
-    //   console.error("Usuario o credenciales incorrectas en localStorage.");
-    //   return false;
-    // }
   }
+  
 
   async registerUser(
     username: string,
@@ -406,110 +340,133 @@ export class SqliteService {
     rol: number
   ): Promise<boolean> {
     try {
+      await this.openConnection(); // Abre la conexión antes de realizar las consultas
+  
       const queryUsuario = `
-    INSERT INTO Usuarios (username, email, password, nombre, apellido, id_rol)
-    VALUES (?, ?, ?, ?, ?, ?);
-  `;
-
+        INSERT INTO Usuarios (username, email, password, nombre, apellido, id_rol)
+        VALUES (?, ?, ?, ?, ?, ?);
+      `;
       const insertaUsuario = await CapacitorSQLite.run({
         database: this.dbName,
         statement: queryUsuario,
-        values: [username, email, password, nombre, apellido, rol],
+        values: [username, email, password, nombre, apellido, rol]
       });
-
+  
       const id_usuario = insertaUsuario.changes.lastId;
-
-      const queryNivel = `INSERT INTO Niveles (id_user, nivel, puntos_totales) 
-    VALUES (?,?,?); `;
+  
+      const queryNivel = `
+        INSERT INTO Niveles (id_user, nivel, puntos_totales) 
+        VALUES (?, ?, ?);
+      `;
       await CapacitorSQLite.run({
         database: this.dbName,
         statement: queryNivel,
-        values: [id_usuario, 1, 0],
+        values: [id_usuario, 1, 0]
       });
-
-      console.log('Usuario registrado correctamente');
-      return true;
+  
+      console.log("Usuario registrado correctamente");
+      return true; // Retorna true si el registro es exitoso
     } catch (error) {
-      console.error('Error al registrar el usuario:', error);
-      return false;
+      console.error("Error al registrar el usuario:", error);
+      return false; // Retorna false si ocurre un error
+    } finally {
+      await this.closeConnection(); // Asegura que la conexión se cierre siempre
     }
   }
+  
 
   async getAllUsers(): Promise<any[]> {
     try {
-      // Crea y abre la conexión a la base de datos si no está abierta.
-      // await CapacitorSQLite.createConnection({ database: this.dbName });
-      // await CapacitorSQLite.open({ database: this.dbName });
-      console.log('Conexión a la base de datos abierta correctamente.');
-
-      // Realiza la consulta para obtener los usuarios.
+      await this.openConnection(); // Asegúrate de que la conexión esté abierta
+  
       const query = `SELECT * FROM Usuarios`;
       const result = await CapacitorSQLite.query({
         database: this.dbName,
         statement: query,
-        values: [],
+        values: []
       });
-
-      console.log('Resultado de la consulta de usuarios:', result);
-      return result.values || [];
+  
+      console.log("Resultado de la consulta de usuarios:", result);
+      return result.values || []; // Devuelve los usuarios obtenidos
     } catch (error) {
-      console.error('Error al obtener los usuarios:', error);
-      return [];
+      console.error("Error al obtener los usuarios:", error);
+      return []; // Retorna un arreglo vacío si ocurre un error
     } finally {
-      // Cierra la conexión después de usarla
-      await CapacitorSQLite.close({ database: this.dbName });
+      await this.closeConnection(); // Asegura que la conexión siempre se cierre
     }
   }
+  
+  
 
   async actualizarUser(id_user: number, nombre: string, apellido: string) {
-    const query = `
-      UPDATE Usuarios 
-      SET nombre = ?, apellido = ?
-      WHERE id_user = ?
-    `;
     try {
+      await this.openConnection(); // Abre la conexión antes de realizar la actualización
+  
+      const query = `
+        UPDATE Usuarios 
+        SET nombre = ?, apellido = ?
+        WHERE id_user = ?
+      `;
+  
       const result = await CapacitorSQLite.run({
+        database: this.dbName,
         statement: query,
-        values: [nombre, apellido, id_user],
+        values: [nombre, apellido, id_user]
       });
+  
       console.log('Usuario actualizado con éxito:', result);
     } catch (error) {
       console.error('Error al actualizar el usuario:', error);
-      throw error;
+      throw error; // Propaga el error para manejo externo si es necesario
+    } finally {
+      await this.closeConnection(); // Asegura que la conexión siempre se cierre
     }
   }
+  
 
   async eliminarUser(id_user: number) {
-    const query = `DELETE FROM Usuarios WHERE id_user = ?`;
     try {
+      await this.openConnection(); // Abre la conexión antes de realizar la eliminación
+  
+      const query = `DELETE FROM Usuarios WHERE id_user = ?`;
+  
       const result = await CapacitorSQLite.run({
+        database: this.dbName,
         statement: query,
-        values: [id_user],
+        values: [id_user]
       });
+  
       console.log('Usuario eliminado con éxito:', result);
     } catch (error) {
       console.error('Error al eliminar el usuario:', error);
-      throw error;
+      throw error; // Propaga el error para manejo externo
+    } finally {
+      await this.closeConnection(); // Asegura que la conexión siempre se cierre
     }
   }
-
+  
+    
+      
   async getCurrentUser() {
     if (!this.currentUser) return null;
-
+  
     try {
+      await this.openConnection(); // Abre la conexión antes de realizar la consulta
+  
       const query = `
-      SELECT Usuarios.username, Usuarios.email, Usuarios.nombre, Usuarios.apellido, Roles.nombre_rol, Niveles.nivel, Niveles.puntos_totales 
-      FROM Usuarios 
-      JOIN Niveles ON Usuarios.id_user = Niveles.id_user 
-      JOIN Roles ON Usuarios.id_rol = Roles.id_rol 
-      WHERE Usuarios.id_user = ?;
-    `;
+        SELECT Usuarios.username, Usuarios.email, Usuarios.nombre, Usuarios.apellido, Roles.nombre_rol, Niveles.nivel, Niveles.puntos_totales 
+        FROM Usuarios 
+        JOIN Niveles ON Usuarios.id_user = Niveles.id_user 
+        JOIN Roles ON Usuarios.id_rol = Roles.id_rol 
+        WHERE Usuarios.id_user = ?;
+      `;
+  
       const result = await CapacitorSQLite.query({
         database: this.dbName,
         statement: query,
-        values: [this.currentUser.id_user],
+        values: [this.currentUser.id_user]
       });
-
+  
       if (result.values && result.values.length > 0) {
         const user = result.values[0];
         const userData = {
@@ -519,52 +476,80 @@ export class SqliteService {
           apellido: user.apellido,
           rol: user.nombre_rol,
           nivel: user.nivel,
-          puntos_totales: user.puntos_totales,
+          puntos_totales: user.puntos_totales
         };
-        console.log('Current user', userData);
-
-        //guardo los datos localmente (localstorage)
+        console.log("Current user", userData);
+  
+        // Guarda los datos localmente
         await Preferences.set({
           key: 'currentUser',
-          value: JSON.stringify(userData),
+          value: JSON.stringify(userData)
         });
-        return userData;
+  
+        return userData; // Devuelve los datos del usuario
       } else {
-        console.error('Usuario no encontrado en la base de datos.');
-        return null;
+        console.error("Usuario no encontrado en la base de datos.");
+        return null; // Retorna null si no se encuentra el usuario
       }
     } catch (error) {
-      console.error('Error al obtener el usuario autenticado:', error);
-      return null;
+      console.error("Error al obtener el usuario autenticado:", error);
+      return null; // Retorna null si ocurre un error
+    } finally {
+      await this.closeConnection(); // Asegura que la conexión siempre se cierre
     }
   }
+  
+  
 
-  async traerNombreUsuario(): Promise<string> {
+  async traerNombreUsuario(): Promise<string | null> {
     try {
+      await this.openConnection(); // Abre la conexión antes de acceder a los datos
+  
       const { value } = await Preferences.get({ key: 'currentUser' });
       if (value) {
         const user = JSON.parse(value);
-        const nombreAvatar = user.nombre + ' ' + user.apellido;
-        return nombreAvatar;
+        const nombreAvatar = `${user.nombre} ${user.apellido}`;
+        return nombreAvatar; // Devuelve el nombre completo del usuario
       } else {
-        return null;
+        return null; // Retorna null si no se encuentra el usuario
       }
     } catch (error) {
       console.error('Error al obtener el nombre del usuario:', error);
-      return null;
+      return null; // Retorna null si ocurre un error
+    } finally {
+      await this.closeConnection(); // Asegura que la conexión siempre se cierre
     }
   }
-
+  
+    
   //metodo para borar el local storage
-  async borrarLocalStorage() {
-    await Preferences.clear();
-    console.log('Se ha limpiado localstorage completamente');
+  async borrarLocalStorage(): Promise<void> {
+    try {
+      await Preferences.clear(); // Limpia el almacenamiento local
+      console.log('Se ha limpiado localstorage completamente');
+    } catch (error) {
+      console.error('Error al limpiar el localstorage:', error); // Maneja errores si ocurren
+      throw error; // Propaga el error si es necesario
+    }
   }
-
+  
+  
   //metodo para desloguear la aplicación
-  logout() {
-    this.currentUser = null;
-    this.isAuthenticated.next(false);
-    this.borrarLocalStorage();
+  async logout(): Promise<void> {
+    try {
+      this.currentUser = null; // Elimina el usuario actual
+      this.isAuthenticated.next(false); // Marca al usuario como no autenticado
+  
+      await this.borrarLocalStorage(); // Limpia el almacenamiento local
+      console.log("LocalStorage limpiado correctamente durante el logout");
+    } catch (error) {
+      console.error("Error durante la limpieza del localStorage en logout:", error);
+    } finally {
+      await this.closeConnection(); // Asegura que la conexión se cierre
+      console.log("Conexión cerrada correctamente durante el logout");
+    }
   }
-}
+  
+
+
+ }

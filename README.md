@@ -6,7 +6,8 @@ instalar ionic en terminal de visual code npm install -g @ionic/cli
 instalar angular en terminal de visual npm install -g @angular/cli
 instalar material en terminal o powershell ng add @angular/material
 
-correr ionic serve
+correr,  ionic serve
+correr en android,  ionic cap open android
 
 
 
