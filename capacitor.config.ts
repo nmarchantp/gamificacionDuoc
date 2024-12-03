@@ -21,11 +21,18 @@ const config: CapacitorConfig = {
 
   plugins: {
     SplashScreen: {
-      launchShowDuration: 3000, // Tiempo que se mostrará la pantalla de carga
-      launchAutoHide: true, // Oculta automáticamente la pantalla de carga
-      backgroundColor: '#ffffffff', // Color de fondo para la pantalla de carga
-      androidScaleType: 'CENTER_CROP', // Cómo se ajustará la imagen en Android
-      showSpinner: false, // Oculta el spinner de carga en la pantalla inicial
+      launchShowDuration: 0,
+      launchAutoHide: true, 
+      backgroundColor: "#ffffffff",
+      androidSplashResourceName: "splash",
+      androidScaleType: "CENTER_CROP",
+      showSpinner: false, 
+      androidSpinnerStyle: "large",
+      iosSpinnerStyle: "small",
+      splashFullScreen: true,
+      layoutName:"lauch_screen",
+      useDialog: false,
+      
     },
     CapacitorStorage: {
       "iosDatabaseLocation": "Library/CapacitorDatabase",
