@@ -1,4 +1,4 @@
-package io.ionic.starter;
+package cl.duoc.PGY4121;
 
 import com.getcapacitor.BridgeActivity;
 
