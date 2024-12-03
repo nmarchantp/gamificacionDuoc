@@ -1,20 +1,24 @@
-<ion-header>
+<ion-header class="ion-no-border">
   <ion-toolbar color="primary">
-    <ion-title>Desafíos</ion-title>
-  </ion-toolbar>
-</ion-header>
+    <ion-title>Tablero de misiones</ion-title>
+    </ion-toolbar>
+  </ion-header>
 
+<div class="shapedividers_com-4940"></div>
 <ion-content [fullscreen]="true" class="ion-padding">
   <ion-list>
     <ion-item *ngFor="let desafio of desafios">
       <ion-label>
-        <h2>{{ desafio.descripcion }}</h2>
-        <p>Puntos: {{ desafio.puntos }}</p>
+        <h2 class="titulo-desafio">{{ desafio.descripcion }}</h2>
+        <p><strong>XP</strong>: {{ desafio.puntos }} puntos</p>
       </ion-label>
       <ion-button (click)="completarDesafio(desafio.id)" color="secondary">Completar</ion-button>
     </ion-item>
   </ion-list>
-  <ion-button expand="full" (click)="volverAlHome()" color="light">
+  <ion-list class="btn-volver">
+  <ion-button expand="default" class="btn-volver-home" color="primary" (click)="volverAlHome()" >
     Volver al Home
   </ion-button>
+</ion-list>
 </ion-content>
+

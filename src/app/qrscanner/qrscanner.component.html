@@ -1,8 +1,35 @@
-<ion-content>
-  <ion-button expand="block" (click)="tomarFoto()">Abrir Cámara</ion-button>
+<ion-content [fullscreen]="true" class="ion-padding custom-background">
+  <!-- Mostrar el QR y el gato solo si no se ha tomado una foto -->
+  <div *ngIf="!imageUrl">
+    <ion-grid>
+      <ion-row class="ion-justify-content-center ion-align-items-center qr-gato">
+        <ion-img src="assets/images/qr-gato.png" alt=""></ion-img>
+      </ion-row>
+    </ion-grid>
+    <ion-row class="ion-justify-content-center">
+      <ion-text class="text-amarillo">Abre tu cámara</ion-text>
+    </ion-row>
+    <ion-row class="ion-justify-content-center">
+      <ion-text class="text-azul">
+        y escanea el código QR para completar tu misión.
+      </ion-text>
+    </ion-row>
+  </div>
 
   <div *ngIf="imageUrl">
-    <p>Imagen capturada:</p>
-    <img [src]="imageUrl" alt="Foto tomada" style="max-width: 100%;" />
+    <ion-grid>
+      <ion-row class="ion-justify-content-center">
+        <ion-text class="text-azul">
+          Imagen capturada:
+        </ion-text>
+      </ion-row>
+      <ion-row class="ion-justify-content-center">
+        <img [src]="imageUrl" alt="Foto tomada" style="width: 100%; border-radius: 10px;" />
+      </ion-row>
+    </ion-grid>
   </div>
+
+  <ion-list class="btn-camara">
+    <ion-button expand="default" class="btn-qr" color="primary" (click)="tomarFoto()">Abrir Cámara</ion-button>
+  </ion-list>
 </ion-content>
