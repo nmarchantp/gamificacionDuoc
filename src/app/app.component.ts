@@ -22,7 +22,7 @@ export class AppComponent {
     this.isWeb = false;
     this.load = false;
     this.initApp();
-    // this.showSplash(); // con esta confi ya se deberia ejecutar el splash
+    //this.showSplash(); // con esta confi ya se deberia ejecutar el splash
   }
 
   async initApp() {

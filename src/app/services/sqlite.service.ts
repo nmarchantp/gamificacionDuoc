@@ -49,9 +49,13 @@ export class SqliteService {
 }
 
 public async createConnection() {
+  console.log('1');
   if (!this.connectionCreated) {
+    console.log('2');
       try {
+        console.log('3');
           await CapacitorSQLite.createConnection({ database: this.dbName });
+          console.log('4');
           this.connectionCreated = true; // Marca que la conexión ha sido creada
           console.log(`Conexión creada para la base de datos ${this.dbName}.`);
       } catch (error) {
