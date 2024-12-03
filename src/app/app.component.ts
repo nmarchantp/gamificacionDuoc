@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { Device } from '@capacitor/device';
 import { SqliteService } from './services/sqlite.service';
+import { SplashScreen } from '@capacitor/splash-screen';
 
 @Component({
   selector: 'app-root',
@@ -21,6 +22,7 @@ export class AppComponent {
     this.isWeb = false;
     this.load = false;
     this.initApp();
+    this.showSplash(); // con esta confi ya se deberia ejecutar el splash
   }
 
   async initApp() {
@@ -43,4 +45,11 @@ export class AppComponent {
     }
   }
   
+  async showSplash(){
+    await SplashScreen.show({
+      autoHide: true,
+      showDuration: 3000, // 3 segundos (podemos cambiarlo dependiendo las pruebas en la tablet)
+    });
+  }
+
 }
