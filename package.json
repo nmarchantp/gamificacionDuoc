@@ -33,6 +33,7 @@
     "@capacitor/ios": "^6.2.0",
     "@capacitor/keyboard": "6.0.2",
     "@capacitor/preferences": "^6.0.2",
+    "@capacitor/splash-screen": "^6.0.3",
     "@capacitor/status-bar": "6.0.1",
     "@ionic/angular": "^8.0.0",
     "assert": "^2.1.0",

@@ -1,0 +1,41 @@
+.qr-gato {
+    ion-img {
+    display: flex;
+    justify-content: center; 
+    align-items: center;
+    min-width: 400px;               
+    max-width: 600px;
+    margin: 40px 0 ;                     
+    }          
+  }
+
+  .text-amarillo{
+    color: #e6a900;
+    font-weight:500;
+    padding: 0 5px 0 0;
+    font-size: 20px;
+  }
+  
+  .text-azul{
+    color: #002649;
+    font-weight:500;
+  }
+  
+  .btn-qr {
+    margin-top: 20px; 
+    border-radius: 80px;
+    font-size: 16px; 
+    text-transform: uppercase; 
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
+  }
+  
+  /* Efectos al pasar el cursor sobre el botón */
+  .btn-qr:hover {
+    box-shadow: 0 6px 8px rgba(0,0,0,0.2); 
+  }
+  
+  .btn-camara {
+    display: flex;
+    justify-content: center; 
+    margin-top: 40px;
+  }
