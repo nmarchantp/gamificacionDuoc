@@ -102,44 +102,79 @@ public isConnectionOpen(): boolean {
 }
   
   
+// 
 async downloadDatabase() {
   try {
-    // Descarga el archivo JSON
-    const jsonExport: JsonSQLite = await lastValueFrom(this.http.get<JsonSQLite>('assets/db/db.json'));
+    this.http.get('assets/db/db.json').subscribe(
+      async (jsonExport: JsonSQLite) => {
+        try {
+          const jsonstring = JSON.stringify(jsonExport);
+          console.log("JSON descargado:", jsonstring);
+          const isValid = await CapacitorSQLite.isJsonValid({ jsonstring });
+          if (isValid.result) {
+            this.dbName = jsonExport.database;
 
-    try {
-      const jsonstring = JSON.stringify(jsonExport);
-      console.log("JSON descargado:", jsonstring);
+            await CapacitorSQLite.importFromJson({ jsonstring });
+            console.log("Base de datos importada exitosamente desde JSONbbbb.");
+            //const usuarios =  await this.getAllUsers();
+            // console.log(usuarios);
 
-      // Valida el JSON descargado
-      const isValid = await CapacitorSQLite.isJsonValid({ jsonstring });
-      console.log("Es válido:", isValid.result);
-
-      if (isValid.result) {
-        this.dbName = jsonExport.database;
-        // Importa el JSON a la base de datos
-        await CapacitorSQLite.importFromJson({ jsonstring });
-        console.log("Base de datos importada exitosamente desde JSON.");
-
-        // Actualiza el estado de la base de datos a lista
-        this.dbready.next(true);
-      } else {
-        console.error("El JSON de la base de datos no es válido");
+            this.dbready.next(true);
+          } else {
+            console.error("El JSON de la base de datos no es válido");
+          }
+        } catch (error) {
+          console.error("Error durante la importación de la base de datos desde JSON:", error);
+        }
+      },
+      (error) => {
+        console.error("Error al descargar el archivo JSON de la base de datos:", error);
       }
-    } catch (error) {
-      console.error("Error durante la importación de la base de datos desde JSON:", error);
-    }
+    );
   } catch (error) {
-    console.error("Error al descargar el archivo JSON de la base de datos:", error);
+    console.error("Error en el proceso de descarga de la base de datos:", error);
   }
 }
+
+  // async downloadDatabase() {
+  //   try {
+  //     // Descarga el archivo JSON
+  //     const jsonExport: JsonSQLite = await lastValueFrom(this.http.get<JsonSQLite>('assets/db/db.json'));
+  
+  //     try {
+  //       const jsonstring = JSON.stringify(jsonExport);
+  //       console.log("JSON descargado:", jsonstring);
+  
+  //       // Valida el JSON descargado
+  //       const isValid = await CapacitorSQLite.isJsonValid({ jsonstring });
+  //       console.log("Es válido:", isValid.result);
+  
+  //       if (isValid.result) {
+  //         this.dbName = jsonExport.database;
+  //         // Importa el JSON a la base de datos
+  //         await CapacitorSQLite.importFromJson({ jsonstring });
+  //         console.log("Base de datos importada exitosamente desde JSON.");
+  
+  //         // Actualiza el estado de la base de datos a lista
+  //         this.dbready.next(true);
+  //       } else {
+  //         console.error("El JSON de la base de datos no es válido");
+  //       }
+  //     } catch (error) {
+  //       console.error("Error durante la importación de la base de datos desde JSON:", error);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error al descargar el archivo JSON de la base de datos:", error);
+  //   }
+  // }
+  
   
   async init() {
     try {
       
   
       // Elimina configuraciones previas
-      //await Preferences.remove({ key: 'first_setup_key' });
+      await Preferences.remove({ key: 'first_setup_key' });
   
       // Obtiene información del dispositivo
       const info = await Device.getInfo();
@@ -183,7 +218,8 @@ async downloadDatabase() {
       await this.closeConnection(); 
     }
   }
-  
+
+
   
   // creo tyablas usuario, roles, niveles, desafios, historial
   async createTables() {
